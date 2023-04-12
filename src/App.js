@@ -24,7 +24,7 @@ function App() {
           <Route path='/gmail/register' element={<RegisterGoogle/>}/>
           <Route path='/gmail/register/admin' element={<RegisterGoogleAdmin/>}/>
           <Route path='/gmail/register/staff' element={<RegisterGoogleStaff/>}/>
-          <Route path='/Home' element={<HomePage/>}/>
+          <Route path='/home' element={<HomePage/>}/>
         </Routes>
     </div>
   );
