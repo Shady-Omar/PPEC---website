@@ -27,6 +27,11 @@ function LogForm() {
 
       // IdP data available using getAdditionalUserInfo(result)
       // ...
+
+      
+    // FB.getLoginStatus(function(response) {
+    //   statusChangeCallback(response);
+    // });
       
     })
     .catch((error) => {
