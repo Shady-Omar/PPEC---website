@@ -29,9 +29,11 @@ function LogForm() {
       // ...
 
       
-    // FB.getLoginStatus(function(response) {
-    //   statusChangeCallback(response);
-    // });
+      if (user.metadata.creationTime === user.metadata.lastSignInTime) {
+        navigate("/SSO/register");
+      } else if (user.metadata.creationTime !== user.metadata.lastSignInTime) {
+        navigate("/Home");
+      }
       
     })
     .catch((error) => {
@@ -70,7 +72,7 @@ function LogForm() {
       // IdP data available using getAdditionalUserInfo(result)
       // ...
         if (user.metadata.creationTime === user.metadata.lastSignInTime) {
-          navigate("/gmail/register");
+          navigate("/SSO/register");
         } else if (user.metadata.creationTime !== user.metadata.lastSignInTime) {
           navigate("/Home");
         }

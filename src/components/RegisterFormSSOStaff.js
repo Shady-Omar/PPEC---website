@@ -5,7 +5,7 @@ import { collection, addDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
-function RegFormGoogleStaff() {
+function RegFormStaffSSO() {
 
   const [staffNum, setStaffNum] = useState("");
   const [staffJob, setStaffJob] = useState("");
@@ -105,4 +105,4 @@ function RegFormGoogleStaff() {
   );
 }
 
-export default RegFormGoogleStaff;
+export default RegFormStaffSSO;

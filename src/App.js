@@ -6,9 +6,9 @@ import HomePage from './Pages/HomePage';
 import RegisterPage from './Pages/RegisterPage';
 import RegisterAdmin from './Pages/RegisterAdminPage';
 import RegisterStaff from './Pages/RegisterStaffPage';
-import RegisterGoogle from './Pages/RegisterGooglePage';
-import RegisterGoogleAdmin from './Pages/RegisterGoogleAdminPage';
-import RegisterGoogleStaff from './Pages/RegisterGoogleStaffPage';
+import RegisterSSO from './Pages/RegisterSSOPage';
+import RegisterSSOAdmin from './Pages/RegisterSSOAdminPage';
+import RegisterSSOStaff from './Pages/RegisterSSOStaffPage';
 import { Routes, Route } from "react-router-dom";
 
 function App() {
@@ -21,9 +21,9 @@ function App() {
           <Route path='/register' element={<RegisterPage/>}/>
           <Route path='/register/admin' element={<RegisterAdmin/>}/>
           <Route path='/register/staff' element={<RegisterStaff/>}/>
-          <Route path='/gmail/register' element={<RegisterGoogle/>}/>
-          <Route path='/gmail/register/admin' element={<RegisterGoogleAdmin/>}/>
-          <Route path='/gmail/register/staff' element={<RegisterGoogleStaff/>}/>
+          <Route path='/SSO/register' element={<RegisterSSO/>}/>
+          <Route path='/SSO/register/admin' element={<RegisterSSOAdmin/>}/>
+          <Route path='/SSO/register/staff' element={<RegisterSSOStaff/>}/>
           <Route path='/home' element={<HomePage/>}/>
         </Routes>
     </div>

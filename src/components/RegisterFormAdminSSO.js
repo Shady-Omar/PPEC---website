@@ -5,7 +5,7 @@ import { collection, addDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
-function RegFormGoogleAdmin() {
+function RegFormAdminSSO() {
 
   const [adminNum, setAdminNum] = useState("");
   const [adminJob, setAdminJob] = useState("");
@@ -105,4 +105,4 @@ function RegFormGoogleAdmin() {
   );
 }
 
-export default RegFormGoogleAdmin;
+export default RegFormAdminSSO;
