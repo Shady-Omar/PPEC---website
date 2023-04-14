@@ -67,7 +67,7 @@ function RegFormStaffSSO() {
       <input
         type="text"
         placeholder="Phone Number"
-        className="w-full phone border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+        className="w-full px-4 py-2 phone border-none bg-transparent outline-none placeholder:italic focus:outline-none"
         value={staffNum}
         onChange={(e) => setStaffNum(e.target.value)}
         required

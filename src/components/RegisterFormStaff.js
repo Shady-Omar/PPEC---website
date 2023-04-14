@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from "../firebase.js";
-import { collection, addDoc } from "firebase/firestore"; 
+import { doc, setDoc } from "firebase/firestore"; 
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 
@@ -52,21 +52,30 @@ function RegFormStaff() {
       }
     } else {
       
-      try {
-        const docRef = await addDoc(collection(db, "users"), {
-          displayName: {staffFirst, staffLast},
-          email: staffEmail,
-          phoneNum: staffNum,
-          jobTitle: staffJob,
-          isAdmin: false,
-        });
-        console.log("Document written with ID: ", docRef.id);
-      } catch (e) {
-        console.error("Error adding document: ", e);
-      }
-    
       const auth = getAuth();
-      createUserWithEmailAndPassword(auth, staffEmail, staffPass);
+      createUserWithEmailAndPassword(auth, staffEmail, staffPass)
+      .then(async(userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        // ...
+        try {
+          await setDoc(doc(db, "users", user.uid), {
+            displayName: {staffFirst, staffLast},
+            email: staffEmail,
+            phoneNum: staffNum,
+            jobTitle: staffJob,
+            isAdmin: false,
+            uid: user.uid,
+          });
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+        // ..
+      });
 
       setStaffFirst("");
       setStaffLast("");

@@ -67,7 +67,7 @@ function RegFormAdminSSO() {
       <input
         type="text"
         placeholder="Phone Number"
-        className="w-full phone border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+        className="w-full px-4 py-2 phone border-none bg-transparent outline-none placeholder:italic focus:outline-none"
         value={adminNum}
         onChange={(e) => setAdminNum(e.target.value)}
         required
@@ -81,7 +81,7 @@ function RegFormAdminSSO() {
       <input
         type="text"
         placeholder="Job Title"
-        className="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+        className="w-full px-4 py-2 border-none bg-transparent outline-none placeholder:italic focus:outline-none"
         value={adminJob}
         onChange={(e) => setAdminJob(e.target.value)}
         required

@@ -142,7 +142,7 @@ function LogForm() {
       <input
         type="text"
         placeholder="Email Address"
-        className="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+        className="w-full px-4 py-2 border-none bg-transparent outline-none placeholder:italic focus:outline-none"
         value={logEmail}
         onChange={(e) => setLogEmail(e.target.value)}
         required
@@ -155,7 +155,7 @@ function LogForm() {
       <input
         type="password"
         placeholder="Password"
-        className="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+        className="w-full px-4 py-2 border-none bg-transparent outline-none placeholder:italic focus:outline-none"
         value={logPass}
         onChange={(e) => setLogPass(e.target.value)}
         required

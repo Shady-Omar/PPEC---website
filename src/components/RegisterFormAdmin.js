@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from "../firebase.js";
-import { collection, addDoc } from "firebase/firestore"; 
+import { doc, setDoc } from "firebase/firestore"; 
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 
@@ -51,21 +51,31 @@ function RegFormAdmin() {
         document.getElementById("err-job").classList.add("hidden");
       }
     } else {
-      try {
-        const docRef = await addDoc(collection(db, "users"), {
-          displayName: {adminFirst, adminLast},
-          email: adminEmail,
-          phoneNum: Number(adminNum),
-          jobTitle: adminJob,
-          isAdmin: true,
-        });
-        console.log("Document written with ID: ", docRef.id);
-      } catch (e) {
-        console.error("Error adding document: ", e);
-      }
+      
 
       const auth = getAuth();
-      createUserWithEmailAndPassword(auth, adminEmail, adminPass);
+      createUserWithEmailAndPassword(auth, adminEmail, adminPass)
+      .then(async(userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        try {
+          await setDoc(doc(db, "users", user.uid), {
+            displayName: {adminFirst, adminLast},
+            email: adminEmail,
+            phoneNum: Number(adminNum),
+            jobTitle: adminJob,
+            isAdmin: true,
+            uid: user.uid,
+          });
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+        // ..
+      });
     
       setAdminFirst("");
       setAdminLast("");
@@ -90,7 +100,7 @@ function RegFormAdmin() {
       <input
         type="text"
         placeholder="First Name"
-        className="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+        className="w-full px-4 py-2 border-none bg-transparent outline-none placeholder:italic focus:outline-none"
         value={adminFirst}
         onChange={(e) => setAdminFirst(e.target.value)}
         required
@@ -104,7 +114,7 @@ function RegFormAdmin() {
       <input
         type="text"
         placeholder="Last Name"
-        className="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+        className="w-full px-4 py-2 border-none bg-transparent outline-none placeholder:italic focus:outline-none"
         value={adminLast}
         onChange={(e) => setAdminLast(e.target.value)}
         required
@@ -118,7 +128,7 @@ function RegFormAdmin() {
       <input
         type="text"
         placeholder="Email Address"
-        className="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+        className="w-full px-4 py-2 border-none bg-transparent outline-none placeholder:italic focus:outline-none"
         value={adminEmail}
         onChange={(e) => setAdminEmail(e.target.value)}
         required
@@ -132,7 +142,7 @@ function RegFormAdmin() {
       <input
         type="password"
         placeholder="Password"
-        className="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+        className="w-full px-4 py-2 border-none bg-transparent outline-none placeholder:italic focus:outline-none"
         value={adminPass}
         onChange={(e) => setAdminPass(e.target.value)}
         required
@@ -146,7 +156,7 @@ function RegFormAdmin() {
       <input
         type="text"
         placeholder="Phone Number"
-        className="w-full phone border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+        className="w-full px-4 py-2 phone border-none bg-transparent outline-none placeholder:italic focus:outline-none"
         value={adminNum}
         onChange={(e) => setAdminNum(e.target.value)}
         required
@@ -160,7 +170,7 @@ function RegFormAdmin() {
       <input
         type="text"
         placeholder="Job Title"
-        className="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+        className="w-full px-4 py-2 border-none bg-transparent outline-none placeholder:italic focus:outline-none"
         value={adminJob}
         onChange={(e) => setAdminJob(e.target.value)}
         required
