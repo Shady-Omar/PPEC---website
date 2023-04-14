@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
-
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase.js";
 
 function LogForm() {
 
@@ -16,7 +17,7 @@ function LogForm() {
 
     const provider = new FacebookAuthProvider();
     signInWithPopup(auth, provider)
-    .then((result) => {
+    .then(async(result) => {
       // The signed-in user info.
       const user = result.user;
       console.log(user);
@@ -28,12 +29,17 @@ function LogForm() {
       // IdP data available using getAdditionalUserInfo(result)
       // ...
 
-      
-      if (user.metadata.creationTime === user.metadata.lastSignInTime) {
-        navigate("/SSO/register");
-      } else if (user.metadata.creationTime !== user.metadata.lastSignInTime) {
+      const docRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
         navigate("/Home");
+      } else {
+        // docSnap.data() will be undefined in this case
+        console.log("No such document!");
+        navigate("/SSO/register");
       }
+
       
     })
     .catch((error) => {
@@ -71,11 +77,16 @@ function LogForm() {
       console.log(user)
       // IdP data available using getAdditionalUserInfo(result)
       // ...
-        if (user.metadata.creationTime === user.metadata.lastSignInTime) {
-          navigate("/SSO/register");
-        } else if (user.metadata.creationTime !== user.metadata.lastSignInTime) {
-          navigate("/Home");
-        }
+      const docRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        navigate("/Home");
+      } else {
+        // docSnap.data() will be undefined in this case
+        console.log("No such document!");
+        navigate("/SSO/register");
+      }
 
 
     }).catch((error) => {

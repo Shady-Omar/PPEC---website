@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from "../firebase.js";
-import { collection, addDoc } from "firebase/firestore"; 
+import { doc, setDoc } from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
@@ -15,11 +15,13 @@ function RegFormAdminSSO() {
   const submit = async (e) => {
     e.preventDefault();
 
-    if ( adminNum === null || adminNum === "" || adminJob === null || adminJob === "") {
-      if (adminNum === null || adminNum === "" ) {
-        document.getElementById("err-num").classList.remove("hidden");
+    var regex = /1?[\s-]?\(?(\d{3})\)?[\s-]?\d{3}[\s-]?\d{4}/;
+
+    if ( adminNum === null || adminNum === "" || !adminNum.match(regex) || adminJob === null || adminJob === "") {
+      if (adminNum === null || adminNum === "" || !adminNum.match(regex)) {
+        document.getElementById("err-num-reg").classList.remove("hidden");
       } else {
-        document.getElementById("err-num").classList.add("hidden");
+        document.getElementById("err-num-reg").classList.add("hidden");
       }
       if (adminJob === null || adminJob === "" ) {
         document.getElementById("err-job").classList.remove("hidden");
@@ -31,7 +33,7 @@ function RegFormAdminSSO() {
       onAuthStateChanged(auth, async(user) => {
         if (user) {
           try {
-            const docRef = await addDoc(collection(db, "users"), {
+            await setDoc(doc(db, "users", user.uid), {
               displayName: user.displayName,
               email: user.email,
               phoneNum: Number(adminNum),
@@ -39,7 +41,6 @@ function RegFormAdminSSO() {
               isAdmin: true,
               uid: user.uid,
             });
-            console.log("Document written with ID: ", docRef.id);
           } catch (e) {
             console.error("Error adding document: ", e);
           }
@@ -64,7 +65,7 @@ function RegFormAdminSSO() {
       className="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500"
     >
       <input
-        type="number"
+        type="text"
         placeholder="Phone Number"
         className="w-full phone border-none bg-transparent outline-none placeholder:italic focus:outline-none"
         value={adminNum}
@@ -72,7 +73,7 @@ function RegFormAdminSSO() {
         required
       />
     </div>
-    <p id='err-num' className='!mt-2 text-left text-red-600 hidden'>* Phone Number is required</p>
+    <p id='err-num-reg' className='!mt-2 text-left text-red-600 hidden'>* Invalid Phone Number</p>
 
     <div
       className="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500"

@@ -17,7 +17,9 @@ function RegFormAdmin() {
   const submit = async (e) => {
     e.preventDefault();
 
-    if (adminFirst === null || adminFirst === "" || adminLast === null || adminLast === "" || adminEmail === null || adminEmail === "" || adminPass === null || adminPass === "" || adminPass.length < 6 || adminNum === null || adminNum === "" || adminJob === null || adminJob === "") {
+    var regex = /1?[\s-]?\(?(\d{3})\)?[\s-]?\d{3}[\s-]?\d{4}/;
+
+    if (adminFirst === null || adminFirst === "" || adminLast === null || adminLast === "" || adminEmail === null || adminEmail === "" || adminPass === null || adminPass === "" || adminPass.length < 6 || adminNum === null || adminNum === "" || !adminNum.match(regex) || adminJob === null || adminJob === "") {
       if (adminFirst === null || adminFirst === "" ) {
         document.getElementById("err-first").classList.remove("hidden");
       } else {
@@ -33,20 +35,15 @@ function RegFormAdmin() {
       } else {
         document.getElementById("err-email").classList.add("hidden");
       }
-      if (adminPass === null || adminPass === "") {
-        document.getElementById("err-pass").classList.remove("hidden");
-      } else {
-        document.getElementById("err-pass").classList.add("hidden");
-      }
-      if (adminPass.length < 6) {
+      if (adminPass === null || adminPass === "" || adminPass.length < 6) {
         document.getElementById("err-pass-length").classList.remove("hidden");
       } else {
         document.getElementById("err-pass-length").classList.add("hidden");
       }
-      if (adminNum === null || adminNum === "" ) {
-        document.getElementById("err-num").classList.remove("hidden");
+      if (adminNum === null || adminNum === "" || !adminNum.match(regex)) {
+        document.getElementById("err-num-reg").classList.remove("hidden");
       } else {
-        document.getElementById("err-num").classList.add("hidden");
+        document.getElementById("err-num-reg").classList.add("hidden");
       }
       if (adminJob === null || adminJob === "" ) {
         document.getElementById("err-job").classList.remove("hidden");
@@ -141,14 +138,13 @@ function RegFormAdmin() {
         required
       />
     </div>
-    <p id='err-pass' className='!mt-2 text-left text-red-600 hidden'>* Password is required</p>
     <p id='err-pass-length' className='!mt-2 text-left text-red-600 hidden'>* Password should be at least 6 characters</p>
 
     <div
       className="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500"
     >
       <input
-        type="number"
+        type="text"
         placeholder="Phone Number"
         className="w-full phone border-none bg-transparent outline-none placeholder:italic focus:outline-none"
         value={adminNum}
@@ -156,8 +152,8 @@ function RegFormAdmin() {
         required
       />
     </div>
-    <p id='err-num' className='!mt-2 text-left text-red-600 hidden'>* Phone Number is required</p>
-
+    <p id='err-num-reg' className='!mt-2 text-left text-red-600 hidden'>* Invalid Phone Number</p>
+    
     <div
       className="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500"
     >
