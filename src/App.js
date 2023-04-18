@@ -21,9 +21,9 @@ function App() {
           <Route path='/register' element={<RegisterPage/>}/>
           <Route path='/register/admin' element={<RegisterAdmin/>}/>
           <Route path='/register/staff' element={<RegisterStaff/>}/>
-          <Route path='/SSO/register' element={<RegisterSSO/>}/>
-          <Route path='/SSO/register/admin' element={<RegisterSSOAdmin/>}/>
-          <Route path='/SSO/register/staff' element={<RegisterSSOStaff/>}/>
+          <Route path='/register-SSO' element={<RegisterSSO/>}/>
+          <Route path='/register-SSO/admin' element={<RegisterSSOAdmin/>}/>
+          <Route path='/register-SSO/staff' element={<RegisterSSOStaff/>}/>
           <Route path='/home' element={<HomePage/>}/>
         </Routes>
     </div>

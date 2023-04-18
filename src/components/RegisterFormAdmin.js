@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { db } from "../firebase.js";
 import { doc, setDoc } from "firebase/firestore"; 
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
 function RegFormAdmin() {
@@ -13,13 +14,22 @@ function RegFormAdmin() {
   const [adminPass, setAdminPass] = useState("");
   const [adminNum, setAdminNum] = useState("");
   const [adminJob, setAdminJob] = useState("");
+  const [selectedPhoto, setSelectedPhoto] = useState("");
+  const [photoUrl, setPhotoUrl] = useState('');
+
+  let navigate = useNavigate();
+
+  const handlePhotoInput = (e) => {
+    setSelectedPhoto(e.target.files[0]);
+  };
 
   const submit = async (e) => {
     e.preventDefault();
 
-    var regex = /1?[\s-]?\(?(\d{3})\)?[\s-]?\d{3}[\s-]?\d{4}/;
+    var emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    var numRegex = /1?[\s-]?\(?(\d{3})\)?[\s-]?\d{3}[\s-]?\d{4}/;
 
-    if (adminFirst === null || adminFirst === "" || adminLast === null || adminLast === "" || adminEmail === null || adminEmail === "" || adminPass === null || adminPass === "" || adminPass.length < 6 || adminNum === null || adminNum === "" || !adminNum.match(regex) || adminJob === null || adminJob === "") {
+    if (adminFirst === null || adminFirst === "" || adminLast === null || adminLast === "" || !adminEmail.match(emailRegex) || adminPass === null || adminPass === "" || adminPass.length < 6 || !adminNum.match(numRegex) || adminJob === null || adminJob === "") {
       if (adminFirst === null || adminFirst === "" ) {
         document.getElementById("err-first").classList.remove("hidden");
       } else {
@@ -30,7 +40,7 @@ function RegFormAdmin() {
       } else {
         document.getElementById("err-last").classList.add("hidden");
       }
-      if (adminEmail === null || adminEmail === "" ) {
+      if (!adminEmail.match(emailRegex)) {
         document.getElementById("err-email").classList.remove("hidden");
       } else {
         document.getElementById("err-email").classList.add("hidden");
@@ -40,7 +50,7 @@ function RegFormAdmin() {
       } else {
         document.getElementById("err-pass-length").classList.add("hidden");
       }
-      if (adminNum === null || adminNum === "" || !adminNum.match(regex)) {
+      if (!adminNum.match(numRegex)) {
         document.getElementById("err-num-reg").classList.remove("hidden");
       } else {
         document.getElementById("err-num-reg").classList.add("hidden");
@@ -52,6 +62,14 @@ function RegFormAdmin() {
       }
     } else {
       
+      // Upload file to Firebase Storage
+      const storage = getStorage();
+      const storageRef = ref(storage, selectedPhoto.name);
+      await uploadBytes(storageRef, selectedPhoto);
+      
+      // Get download URL of file
+      const downloadUrl = await getDownloadURL(storageRef);
+      setPhotoUrl(downloadUrl);
 
       const auth = getAuth();
       createUserWithEmailAndPassword(auth, adminEmail, adminPass)
@@ -60,11 +78,13 @@ function RegFormAdmin() {
         const user = userCredential.user;
         try {
           await setDoc(doc(db, "users", user.uid), {
-            displayName: {adminFirst, adminLast},
+            firstname: adminFirst,
+            lastname: adminLast,
             email: adminEmail,
             phoneNum: Number(adminNum),
             jobTitle: adminJob,
             isAdmin: true,
+            photoUrl: downloadUrl,
             uid: user.uid,
           });
         } catch (e) {
@@ -83,6 +103,8 @@ function RegFormAdmin() {
       setAdminPass("");
       setAdminNum("");
       setAdminJob("");
+
+      navigate("/");
     }
 
     
@@ -177,6 +199,22 @@ function RegFormAdmin() {
       />
     </div>
     <p id='err-job' className='!mt-2 text-left text-red-600 hidden'>* Job Title is required</p>
+
+    <div className="w-full flex flex-col justify-start transform border-b-2 bg-transparent cursor-pointer text-lg duration-300 focus-within:border-indigo-500">
+      <label
+        className="w-full px-4 py-2 text-left border-none bg-transparent outline-none cursor-pointer text-slate-400 italic"
+        htmlFor="upload"
+      >
+        Upload Profile Photo (Optional)
+      </label>
+      <input
+        id="upload"
+        type="file"
+        className="transform rounded-sm bg-transparent cursor-pointer px-4 py-2 font-bold"
+        onChange={handlePhotoInput}
+      />
+      {/* {photoUrl && <img src={photoUrl} alt="Uploaded file" />} */}
+    </div>
 
     <button
       type='submit'

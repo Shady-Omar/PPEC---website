@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { db } from "../firebase.js";
 import { doc, setDoc } from "firebase/firestore"; 
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
 function RegFormStaff() {
@@ -13,13 +14,22 @@ function RegFormStaff() {
   const [staffPass, setStaffPass] = useState("");
   const [staffNum, setStaffNum] = useState("");
   const [staffJob, setStaffJob] = useState("");
+  const [selectedPhoto, setSelectedPhoto] = useState("");
+  const [photoUrl, setPhotoUrl] = useState('');
+
+  let navigate = useNavigate();
+
+  const handlePhotoInput = (e) => {
+    setSelectedPhoto(e.target.files[0]);
+  };
 
   const submit = async (e) => {
     e.preventDefault();
 
-    var regex = /1?[\s-]?\(?(\d{3})\)?[\s-]?\d{3}[\s-]?\d{4}/;
+    var emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    var numRegex = /1?[\s-]?\(?(\d{3})\)?[\s-]?\d{3}[\s-]?\d{4}/;
 
-    if (staffFirst === null || staffFirst === "" || staffLast === null || staffLast === "" || staffEmail === null || staffEmail === "" || staffPass === null || staffPass === "" || staffPass.length < 6 || staffNum === null || !staffNum.match(regex) || staffNum === "" || staffJob === null || staffJob === "") {
+    if (staffFirst === null || staffFirst === "" || staffLast === null || staffLast === "" || !staffEmail.match(emailRegex) || staffPass === null || staffPass === "" || staffPass.length < 6 || !staffNum.match(numRegex) || staffJob === null || staffJob === "") {
       if (staffFirst === null || staffFirst === "" ) {
         document.getElementById("err-first").classList.remove("hidden");
       } else {
@@ -30,7 +40,7 @@ function RegFormStaff() {
       } else {
         document.getElementById("err-last").classList.add("hidden");
       }
-      if (staffEmail === null || staffEmail === "" ) {
+      if (!staffEmail.match(emailRegex)) {
         document.getElementById("err-email").classList.remove("hidden");
       } else {
         document.getElementById("err-email").classList.add("hidden");
@@ -40,7 +50,7 @@ function RegFormStaff() {
       } else {
         document.getElementById("err-pass-length").classList.add("hidden");
       }
-      if (staffNum === null || staffNum === "" || !staffNum.match(regex)) {
+      if (!staffNum.match(numRegex)) {
         document.getElementById("err-num-reg").classList.remove("hidden");
       } else {
         document.getElementById("err-num-reg").classList.add("hidden");
@@ -52,6 +62,15 @@ function RegFormStaff() {
       }
     } else {
       
+      // Upload file to Firebase Storage
+      const storage = getStorage();
+      const storageRef = ref(storage, selectedPhoto.name);
+      await uploadBytes(storageRef, selectedPhoto);
+      
+      // Get download URL of file
+      const downloadUrl = await getDownloadURL(storageRef);
+      setPhotoUrl(downloadUrl);
+
       const auth = getAuth();
       createUserWithEmailAndPassword(auth, staffEmail, staffPass)
       .then(async(userCredential) => {
@@ -60,11 +79,13 @@ function RegFormStaff() {
         // ...
         try {
           await setDoc(doc(db, "users", user.uid), {
-            displayName: {staffFirst, staffLast},
+            firstname: staffFirst,
+            lastname: staffLast,
             email: staffEmail,
             phoneNum: staffNum,
             jobTitle: staffJob,
             isAdmin: false,
+            photoUrl: downloadUrl,
             uid: user.uid,
           });
         } catch (e) {
@@ -84,6 +105,7 @@ function RegFormStaff() {
       setStaffNum("");
       setStaffJob("");
       
+      navigate("/");
     }
 
   };
@@ -131,7 +153,7 @@ function RegFormStaff() {
         onChange={(e) => setStaffEmail(e.target.value)}
       />
     </div>
-    <p id='err-email' className='!mt-2 text-left text-red-600 hidden'>* Email address is required</p>
+    <p id='err-email' className='!mt-2 text-left text-red-600 hidden'>* Invalid Email Address</p>
 
     <div
       className="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500"
@@ -180,6 +202,23 @@ function RegFormStaff() {
       </div>
     </div>
     <p id='err-job' className='!mt-2 text-left text-red-600 hidden'>* Job Title is required</p>
+
+    <div className="w-full flex flex-col justify-start transform border-b-2 bg-transparent cursor-pointer text-lg duration-300 focus-within:border-indigo-500">
+      <label
+        className="w-full px-4 py-2 text-left border-none bg-transparent outline-none cursor-pointer text-slate-400 italic"
+        htmlFor="upload"
+      >
+        Upload Profile Photo (Optional)
+      </label>
+      <input
+        id="upload"
+        type="file"
+        className="transform rounded-sm bg-transparent cursor-pointer px-4 py-2 font-bold"
+        onChange={handlePhotoInput}
+      />
+      {/* {photoUrl && <img src={photoUrl} alt="Uploaded file" />} */}
+    </div>
+
 
     <button
       className="transform rounded-sm bg-indigo-600 py-2 font-bold duration-300 hover:bg-indigo-400"

@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 // TODO: Replace the following with your app's Firebase project configuration
 // See: https://support.google.com/firebase/answer/7015592
@@ -10,7 +11,7 @@ const firebaseConfig = {
   projectId: "ppec-19340",
   storageBucket: "ppec-19340.appspot.com",
   messagingSenderId: "491673976017",
-  appId: "1:491673976017:web:759908594e74fabf97d9f0"
+  appId: "1:491673976017:web:759908594e74fabf97d9f0",
 };
 
 // Initialize Firebase
@@ -20,5 +21,6 @@ const app = initializeApp(firebaseConfig);
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
 
-export { db, auth };
+export { db, auth, storage };

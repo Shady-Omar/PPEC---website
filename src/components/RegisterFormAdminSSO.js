@@ -1,24 +1,34 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { db } from "../firebase.js";
 import { doc, setDoc } from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
 
 
 function RegFormAdminSSO() {
 
   const [adminNum, setAdminNum] = useState("");
   const [adminJob, setAdminJob] = useState("");
+  const [selectedPhoto, setSelectedPhoto] = useState("");
+  const [photoUrl, setPhotoUrl] = useState('');
+  
+  let navigate = useNavigate();
+
+  const handlePhotoInput = (e) => {
+    setSelectedPhoto(e.target.files[0]);
+  };
 
   const auth = getAuth();
 
   const submit = async (e) => {
     e.preventDefault();
 
-    var regex = /1?[\s-]?\(?(\d{3})\)?[\s-]?\d{3}[\s-]?\d{4}/;
+    var numRegex = /1?[\s-]?\(?(\d{3})\)?[\s-]?\d{3}[\s-]?\d{4}/
 
-    if ( adminNum === null || adminNum === "" || !adminNum.match(regex) || adminJob === null || adminJob === "") {
-      if (adminNum === null || adminNum === "" || !adminNum.match(regex)) {
+    if (!adminNum.match(numRegex) || adminJob === null || adminJob === "") {
+      if (!adminNum.match(numRegex)) {
         document.getElementById("err-num-reg").classList.remove("hidden");
       } else {
         document.getElementById("err-num-reg").classList.add("hidden");
@@ -30,15 +40,26 @@ function RegFormAdminSSO() {
       }
     } else {
 
+      // Upload file to Firebase Storage
+      const storage = getStorage();
+      const storageRef = ref(storage, selectedPhoto.name);
+      await uploadBytes(storageRef, selectedPhoto);
+      
+      // Get download URL of file
+      const downloadUrl = await getDownloadURL(storageRef);
+      setPhotoUrl(downloadUrl);
+
       onAuthStateChanged(auth, async(user) => {
         if (user) {
           try {
             await setDoc(doc(db, "users", user.uid), {
-              displayName: user.displayName,
+              firstname: user.displayName,
+              lastname: "",
               email: user.email,
               phoneNum: Number(adminNum),
               jobTitle: adminJob,
               isAdmin: true,
+              photoUrl: downloadUrl,
               uid: user.uid,
             });
           } catch (e) {
@@ -50,6 +71,8 @@ function RegFormAdminSSO() {
 
       setAdminNum("");
       setAdminJob("");
+      
+      navigate("/Home");
     }
 
     
@@ -88,6 +111,22 @@ function RegFormAdminSSO() {
       />
     </div>
     <p id='err-job' className='!mt-2 text-left text-red-600 hidden'>* Job Title is required</p>
+
+    <div className="w-full flex flex-col justify-start transform border-b-2 bg-transparent cursor-pointer text-lg duration-300 focus-within:border-indigo-500">
+      <label
+        className="w-full px-4 py-2 text-left border-none bg-transparent outline-none cursor-pointer text-slate-400 italic"
+        htmlFor="upload"
+      >
+        Upload Profile Photo (Optional)
+      </label>
+      <input
+        id="upload"
+        type="file"
+        className="transform rounded-sm bg-transparent cursor-pointer px-4 py-2 font-bold"
+        onChange={handlePhotoInput}
+      />
+      {/* {photoUrl && <img src={photoUrl} alt="Uploaded file" />} */}
+    </div>
 
     <button
       type='submit'

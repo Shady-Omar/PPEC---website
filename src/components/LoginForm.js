@@ -37,7 +37,7 @@ function LogForm() {
       } else {
         // docSnap.data() will be undefined in this case
         console.log("No such document!");
-        navigate("/SSO/register");
+        navigate("/register-SSO");
       }
 
       
@@ -85,7 +85,7 @@ function LogForm() {
       } else {
         // docSnap.data() will be undefined in this case
         console.log("No such document!");
-        navigate("/SSO/register");
+        navigate("/register-SSO");
       }
 
 
