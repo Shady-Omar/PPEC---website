@@ -1,9 +1,9 @@
-// import RegForm from '../components/RegisterForm';
+import PopupForm from '../components/PopupForm';
 
 function HomePage() {
   return (
     <div className="HomePage">
-        <h1>PPEC HOME</h1>
+        <PopupForm/>
     </div>
   );
 }

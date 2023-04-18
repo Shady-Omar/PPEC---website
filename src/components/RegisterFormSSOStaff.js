@@ -39,18 +39,20 @@ function RegFormStaffSSO() {
       }
     } else {
 
-      // Upload file to Firebase Storage
-      const storage = getStorage();
-      const storageRef = ref(storage, selectedPhoto.name);
-      await uploadBytes(storageRef, selectedPhoto);
       
-      // Get download URL of file
-      const downloadUrl = await getDownloadURL(storageRef);
-      setPhotoUrl(downloadUrl);
 
       onAuthStateChanged(auth, async(user) => {
         if (user) {
           try {
+            // Upload file to Firebase Storage
+            const storage = getStorage();
+            const storageRef = ref(storage, `images/${user.email}/${selectedPhoto.name}`);
+            await uploadBytes(storageRef, selectedPhoto);
+            
+            // Get download URL of file
+            const downloadUrl = await getDownloadURL(storageRef);
+            setPhotoUrl(downloadUrl);
+
             await setDoc(doc(db, "users", user.uid), {
               firstname: user.displayName,
               lastname: "",
@@ -61,6 +63,7 @@ function RegFormStaffSSO() {
               photoUrl: downloadUrl,
               uid: user.uid,
             });
+            
           } catch (e) {
             console.error("Error adding document: ", e);
           }
@@ -143,10 +146,10 @@ function RegFormStaffSSO() {
       Continue
     </button>
 
-    <p className="text-center text-lg !mt-4">
+    {/* <p className="text-center text-lg !mt-4">
       Already have an account?
       <span className="font-medium text-indigo-500 underline-offset-4 hover:underline cursor-pointer"> <Link to="/">Sign In</Link> </span>
-    </p>
+    </p> */}
   </section>
 </main>
   );

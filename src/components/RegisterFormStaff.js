@@ -62,14 +62,7 @@ function RegFormStaff() {
       }
     } else {
       
-      // Upload file to Firebase Storage
-      const storage = getStorage();
-      const storageRef = ref(storage, selectedPhoto.name);
-      await uploadBytes(storageRef, selectedPhoto);
       
-      // Get download URL of file
-      const downloadUrl = await getDownloadURL(storageRef);
-      setPhotoUrl(downloadUrl);
 
       const auth = getAuth();
       createUserWithEmailAndPassword(auth, staffEmail, staffPass)
@@ -78,6 +71,16 @@ function RegFormStaff() {
         const user = userCredential.user;
         // ...
         try {
+
+          // Upload file to Firebase Storage
+          const storage = getStorage();
+          const storageRef = ref(storage, `images/${staffEmail}/${selectedPhoto.name}`);
+          await uploadBytes(storageRef, selectedPhoto);
+          
+          // Get download URL of file
+          const downloadUrl = await getDownloadURL(storageRef);
+          setPhotoUrl(downloadUrl);
+
           await setDoc(doc(db, "users", user.uid), {
             firstname: staffFirst,
             lastname: staffLast,

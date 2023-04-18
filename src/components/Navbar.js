@@ -3,7 +3,7 @@ import React from 'react';
 
 function Navbar() {
   return (
-    <nav id="header" className="w-full z-30 py-1 bg-indigo-600 shadow-lg fixed">
+    <nav id="header" className="w-full z-30 py-1 bg-indigo-600 shadow-lg">
       <div className="w-full flex items-center justify-between mt-0 px-10 py-2">
          <input className="hidden" type="checkbox" id="menu-toggle"></input>
          
