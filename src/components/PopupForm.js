@@ -262,7 +262,7 @@ function PopupForm() {
                   id="opening-time"
                   name="openingTime"
                   value={openingTime}
-                  className="shadow appearance-none border rounded w-28 py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
+                  className="shadow appearance-none border rounded w-1/5 py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
                   onChange={(event) => setOpeningTime(event.target.value)}
                 />
                 <label htmlFor="closing-time" className="text-gray-700">
@@ -273,7 +273,7 @@ function PopupForm() {
                   id="closing-time"
                   name="closingTime"
                   value={closingTime}
-                  className="shadow appearance-none border rounded w-28 py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
+                  className="shadow appearance-none border rounded w-1/5 py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
                   onChange={(event) => setClosingTime(event.target.value)}
                 />
               </div>
