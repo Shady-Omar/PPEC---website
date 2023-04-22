@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
+import LocationPicker from './LocationPicker';
 
 function PopupForm() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [centerName, setCenterName] = useState("");
-  const [streetAddress, setStreetAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zipCode, setZipCode] = useState("");
   const [daysOfWeek, setDaysOfWeek] = useState({
     monday: false,
     tuesday: false,
@@ -17,32 +14,81 @@ function PopupForm() {
     saturday: false,
     sunday: false,
   });
+
   const [openingTime, setOpeningTime] = useState("");
   const [closingTime, setClosingTime] = useState("");
 
   function handleSubmit(event) {
     event.preventDefault();
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsOpen(false);
-      setIsSubmitted(false);
-      setCenterName("");
-      setStreetAddress("");
-      setCity("");
-      setState("");
-      setZipCode("");
-      setDaysOfWeek({
-        monday: false,
-        tuesday: false,
-        wednesday: false,
-        thursday: false,
-        friday: false,
-        saturday: false,
-        sunday: false,
-      });
-      setOpeningTime("");
-      setClosingTime("");
-    }, 2000);
+    let centerAddress = document.getElementById('street-address').value;
+    let centerCity = document.getElementById('ppec-city').value;
+    let centerState = document.getElementById('state-select').value;
+    let centerZip = document.getElementById('ppec-zip').value;
+    if (centerName === null || centerName === "" || centerAddress === null || centerAddress === "" || centerCity === null || centerCity === "" || centerState === null || centerState === "" || centerZip === null || centerZip === "" || (daysOfWeek.friday === false && daysOfWeek.monday === false && daysOfWeek.saturday === false && daysOfWeek.sunday === false && daysOfWeek.thursday === false && daysOfWeek.tuesday === false && daysOfWeek.wednesday === false) || openingTime === '' || openingTime === null || closingTime === '' || closingTime === null) {
+      if (centerName === null || centerName === "" ) {
+        document.getElementById("err-name").classList.remove("hidden");
+      } else {
+        document.getElementById("err-name").classList.add("hidden");
+      }
+      if (centerAddress === null || centerAddress === "" ) {
+        document.getElementById("err-address").classList.remove("hidden");
+      } else {
+        document.getElementById("err-address").classList.add("hidden");
+      }
+      if (centerCity === null || centerCity === "" ) {
+        document.getElementById("err-city").classList.remove("hidden");
+      } else {
+        document.getElementById("err-city").classList.add("hidden");
+      }
+      if (centerState === null || centerState === "" ) {
+        document.getElementById("err-state").classList.remove("hidden");
+      } else {
+        document.getElementById("err-state").classList.add("hidden");
+      }
+      if (centerZip === null || centerZip === "" ) {
+        document.getElementById("err-zip").classList.remove("hidden");
+      } else {
+        document.getElementById("err-zip").classList.add("hidden");
+      }
+      if (daysOfWeek.friday === false && daysOfWeek.monday === false && daysOfWeek.saturday === false && daysOfWeek.sunday === false && daysOfWeek.thursday === false && daysOfWeek.tuesday === false && daysOfWeek.wednesday === false) {
+        document.getElementById("err-days").classList.remove("hidden");
+      } else {
+        document.getElementById("err-days").classList.add("hidden");
+      }
+      if (openingTime === null || openingTime === "" ) {
+        document.getElementById("err-time").classList.remove("hidden");
+      } else {
+        document.getElementById("err-time").classList.add("hidden");
+      }
+      if (closingTime === null || closingTime === "" ) {
+        document.getElementById("err-time").classList.remove("hidden");
+      } else {
+        document.getElementById("err-time").classList.add("hidden");
+      }
+      if (openingTime >= closingTime) {
+        document.getElementById("err-time").classList.remove("hidden");
+      } else {
+        document.getElementById("err-time").classList.add("hidden");
+      }
+    } else {
+      setIsSubmitted(true);
+      setTimeout(() => {
+        setIsOpen(false);
+        setIsSubmitted(false);
+        setCenterName("");
+        setDaysOfWeek({
+          monday: false,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+        });
+        setOpeningTime("");
+        setClosingTime("");
+      }, 2000);
+    }
   }
 
   return (
@@ -56,11 +102,11 @@ function PopupForm() {
 
       {isOpen && (
         <div
-          className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50"
+          className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 overflow-y-scroll"
           onClick={() => setIsOpen(false)}
         >
           <form
-            className="bg-white p-6 rounded-md shadow-lg w-[90%] md:w-2/3"
+            className="bg-white p-6 rounded-md shadow-lg w-[90%] md:w-2/3 mt-96 mb-20"
             onClick={(event) => event.stopPropagation()}
             onSubmit={handleSubmit}
           >
@@ -78,95 +124,9 @@ function PopupForm() {
                 onChange={(event) => setCenterName(event.target.value)}
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2" htmlFor="street-address">
-                PPEC Center Address
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
-                id="street-address"
-                type="text"
-                placeholder="Enter Street Address"
-                value={streetAddress}
-                onChange={(event) => setStreetAddress(event.target.value)}
-              />
-              <div className='flex flex-row justify-between my-4'>
-                <input
-                  className="shadow appearance-none border rounded w-[32%] py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
-                  id="ppec-city"
-                  type="text"
-                  placeholder="City"
-                  value={city}
-                  onChange={(event) => setCity(event.target.value)}
-                />
-                <select
-                  className="shadow appearance-none cursor-pointer border rounded w-[32%] py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
-                  id="ppec-state"
-                  value={state}
-                  onChange={(event) => setState(event.target.value)}
-                >
-                  <option className='text-gray-700' value="">Select a state</option>
-                  <option value="AL">Alabama</option>
-                  <option value="AK">Alaska</option>
-                  <option value="AZ">Arizona</option>
-                  <option value="AR">Arkansas</option>
-                  <option value="CA">California</option>
-                  <option value="CO">Colorado</option>
-                  <option value="CT">Connecticut</option>
-                  <option value="DE">Delaware</option>
-                  <option value="FL">Florida</option>
-                  <option value="GA">Georgia</option>
-                  <option value="HI">Hawaii</option>
-                  <option value="ID">Idaho</option>
-                  <option value="IL">Illinois</option>
-                  <option value="IN">Indiana</option>
-                  <option value="IA">Iowa</option>
-                  <option value="KS">Kansas</option>
-                  <option value="KY">Kentucky</option>
-                  <option value="LA">Louisiana</option>
-                  <option value="ME">Maine</option>
-                  <option value="MD">Maryland</option>
-                  <option value="MA">Massachusetts</option>
-                  <option value="MI">Michigan</option>
-                  <option value="MN">Minnesota</option>
-                  <option value="MS">Mississippi</option>
-                  <option value="MO">Missouri</option>
-                  <option value="MT">Montana</option>
-                  <option value="NE">Nebraska</option>
-                  <option value="NV">Nevada</option>
-                  <option value="NH">New Hampshire</option>
-                  <option value="NJ">New Jersey</option>
-                  <option value="NM">New Mexico</option>
-                  <option value="NY">New York</option>
-                  <option value="NC">North Carolina</option>
-                  <option value="ND">North Dakota</option>
-                  <option value="OH">Ohio</option>
-                  <option value="OK">Oklahoma</option>
-                  <option value="OR">Oregon</option>
-                  <option value="PA">Pennsylvania</option>
-                  <option value="RI">Rhode Island</option>
-                  <option value="SC">South Carolina</option>
-                  <option value="SD">South Dakota</option>
-                  <option value="TN">Tennessee</option>
-                  <option value="TX">Texas</option>
-                  <option value="UT">Utah</option>
-                  <option value="VT">Vermont</option>
-                  <option value="VA">Virginia</option>
-                  <option value="WA">Washington</option>
-                  <option value="WV">West Virginia</option>
-                  <option value="WI">Wisconsin</option>
-                  <option value="WY">Wyoming</option>
-                </select>              
-                <input
-                  className="shadow appearance-none border rounded w-[32%] py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
-                  id="ppec-zip"
-                  type="text"
-                  placeholder="Zip code"
-                  value={zipCode}
-                  onChange={(event) => setZipCode(event.target.value)}
-                />
-              </div>
-            </div>
+            <p id='err-name' className='text-left text-sm text-red-600 hidden'>* Center Name is required</p>
+            
+              <LocationPicker />
             <div className="mb-4 flex flex-col items-center">
               <label className="block text-gray-700 font-bold" htmlFor="street-address">
                 Operational Hours
@@ -252,8 +212,9 @@ function PopupForm() {
                   <span className="ml-2 text-gray-700">Saturday</span>
                 </label>
                 </div>
+                <p id='err-days' className='text-left text-sm text-red-600 hidden'>* Select atleast one day</p>
               </div>
-              <div className="flex justify-center items-center space-x-4 my-4">
+              <div className="flex flex-col md:flex-row justify-center items-center space-x-4 my-4">
                 <label htmlFor="opening-time" className="text-gray-700">
                   Opening Time
                 </label>
@@ -262,7 +223,7 @@ function PopupForm() {
                   id="opening-time"
                   name="openingTime"
                   value={openingTime}
-                  className="shadow appearance-none border rounded w-1/5 py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
+                  className="shadow appearance-none border rounded w-3/4 lg:w-1/5 mb-4 py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
                   onChange={(event) => setOpeningTime(event.target.value)}
                 />
                 <label htmlFor="closing-time" className="text-gray-700">
@@ -273,10 +234,11 @@ function PopupForm() {
                   id="closing-time"
                   name="closingTime"
                   value={closingTime}
-                  className="shadow appearance-none border rounded w-1/5 py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
+                  className="shadow appearance-none border rounded w-3/4 lg:w-1/5 mb-4 py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
                   onChange={(event) => setClosingTime(event.target.value)}
                 />
               </div>
+              <p id='err-time' className='text-left text-sm text-red-600 text-center hidden'>* Invalid Opening / Closing Time</p>
             <div className="flex items-center justify-between">
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-300"

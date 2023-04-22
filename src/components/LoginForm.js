@@ -133,7 +133,7 @@ function LogForm() {
   return (
 
 <main className="mx-auto flex min-h-screen w-full items-center justify-center bg-gray-900 text-white">
-  <section className="flex w-[30rem] flex-col space-y-10 mt-[68px] scale-90">
+  <section className="flex w-[30rem] flex-col space-y-10  scale-90">
     <div className="text-center text-4xl font-medium">Log In</div>
 
     <div

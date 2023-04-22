@@ -84,7 +84,7 @@ function RegFormAdminSSO() {
   return (
 
 <main className="mx-auto flex min-h-screen w-full items-center justify-center bg-gray-900 text-white">
-  <section className="flex w-[30rem] flex-col space-y-10 mt-[68px] scale-75">
+  <section className="flex w-[30rem] flex-col space-y-10  scale-75">
     <div className="text-center text-[2rem] font-medium">Create an Adminstrator Account</div>
 
     <div
