@@ -31,7 +31,7 @@ function PopupForm() {
     let centerZip = document.getElementById('ppec-zip').value;
     let lat = document.getElementById('lat').value;
     let lng = document.getElementById('lng').value;
-    const location = new GeoPoint(lat, lng);
+    const geoLocation = new GeoPoint(lat, lng);
     if (centerName === null || centerName === "" || centerAddress === null || centerAddress === "" || centerCity === null || centerCity === "" || centerState === null || centerState === "" || centerZip === null || centerZip === "" || selectedDays.length === 0 || openingTime === '' || openingTime === null || closingTime === '' || closingTime === null) {
       if (centerName === null || centerName === "" ) {
         document.getElementById("err-name").classList.remove("hidden");
@@ -99,7 +99,7 @@ function PopupForm() {
             opertionalDays: selectedDays,
             complient: false,
             country: "United States",
-            location: location,
+            location: geoLocation,
             onSiteCNA: 0,
             onSiteLPN: 0,
             radius: 500,
@@ -107,7 +107,6 @@ function PopupForm() {
             state: centerState,
             zipCode: centerZip,
           });
-          console.log("Document written with ID: ", docRef.id);
         } else {
           // User is signed out
           // ...
@@ -131,6 +130,7 @@ function PopupForm() {
         setSelectedDays([]);
         setOpeningTime("");
         setClosingTime("");
+        window.location.reload();
       }, 2000);
       } catch (error) {
         
