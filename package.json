@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@googlemaps/js-api-loader": "^1.15.1",
     "@react-google-maps/api": "^2.18.1",
     "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.16.5",
@@ -11,6 +12,7 @@
     "firebase": "^9.19.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-geocode": "^0.2.3",
     "react-google-maps": "^9.4.5",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.10.0",

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { GoogleMap, Marker, InfoWindow } from '@react-google-maps/api';
+import { GoogleMap, InfoWindow } from '@react-google-maps/api';
+import Geocode from "react-geocode";
 
-const containerStyle = {
+const mapContainerStyle = {
   width: '100%',
   height: '250px'
 };
@@ -13,10 +14,12 @@ const center = {
 
 function LocationPicker() {
   const [selected, setSelected] = React.useState(null);
-  const [search, setSearch] = React.useState('');
   const [city, setCity] = useState("");
   const [selectedState, setSelectedState] = useState('');
   const [zipCode, setZipCode] = useState("");
+  const [address, setAddress] = useState('');
+  const [lat, setLat] = useState('');
+  const [lng, setLng] = useState('');
 
   const handleChange = (event) => {
     setSelectedState(event.target.value);
@@ -40,23 +43,62 @@ function LocationPicker() {
     <option key={state} value={state}>{state}</option>
   ));
 
-  const onSelect = item => {
-    setSelected(item);
-  }
-
-  // const handleSubmit = event => {
-  //   event.preventDefault();
-  //   console.log(search);
-  // }
-
   useEffect(() => {
     const map = new window.google.maps.Map(document.getElementById('map'), {
       center: center,
       zoom: 10,
     });
 
+    const marker = new window.google.maps.Marker({
+      map: map,
+    });
+
+    window.google.maps.event.addListener(map, 'click', (event) => {      
+        marker.setPosition(event.latLng);
+      // console.log(event.latLng.lat())
+
+      Geocode.setApiKey("AIzaSyC52uvc5kD2YvHTPot-yN1HweJ_b3qIGKQ");
+      setLat(`${event.latLng.lat()}`)
+      setLng(`${event.latLng.lng()}`)
+      Geocode.fromLatLng(event.latLng.lat(), event.latLng.lng()).then(
+        (response) => {
+          const address = response.results[0].formatted_address;
+          setAddress(address);
+          let city, state, zip;
+          for (let i = 0; i < response.results[0].address_components.length; i++) {
+            for (let j = 0; j < response.results[0].address_components[i].types.length; j++) {
+              switch (response.results[0].address_components[i].types[j]) {
+                case "locality":
+                  city = response.results[0].address_components[i].long_name;
+                  break;
+                case "administrative_area_level_1":
+                  state = response.results[0].address_components[i].long_name;
+                  break;
+                // case "country":
+                //   country = response.results[0].address_components[i].long_name;
+                //   break;
+                case "postal_code":
+                  zip = response.results[0].address_components[i].long_name;
+                  break;
+                  default:
+              }
+            }
+          }
+          setCity(city);
+          setSelectedState(state);
+          setZipCode(zip);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    })
+
+
+
+    
     const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode({ address: search }, (results, status) => {
+    geocoder.geocode({ address: address }, (results, status) => {
       if (status === 'OK') {
         map.setCenter(results[0].geometry.location);
         const marker = new window.google.maps.Marker({
@@ -67,11 +109,11 @@ function LocationPicker() {
         // console.log('Geocode was not successful for the following reason:', status);
       }
     });
-  }, [search]);
+  }, [address]);
 
   return (
     <div className="mb-4">
-      <div className="mb-4">
+      <div>
               <label className="block text-gray-700 font-bold mb-2" htmlFor="street-address">
                 PPEC Center Address
               </label>
@@ -80,8 +122,8 @@ function LocationPicker() {
                 id="street-address"
                 type="text"
                 placeholder="Enter Street Address"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                value={address}
+                onChange={(event) => setAddress(event.target.value)}
               />
               <p id='err-address' className='text-left !mt-4 text-sm text-red-600 hidden'>* Center Address is required</p>
               <div className='flex flex-row justify-between my-4'>
@@ -91,13 +133,13 @@ function LocationPicker() {
                     id="ppec-city"
                     type="text"
                     placeholder="City"
-                    value={city}
+                    value={city || ""}
                     onChange={(event) => setCity(event.target.value)}
                   />
                   <p id='err-city' className='text-left !mt-4 text-sm text-red-600 hidden'>* City is required</p>
                 </div>
                 <div className='w-[32%]'>
-                <select id="state-select" className="shadow appearance-none cursor-pointer border rounded w-full py-2 px-3 text-gray-400 leading-tight focus:outline-blue-500 focus:shadow-outline" value={selectedState} onChange={handleChange}>
+                <select id="state-select" className="shadow appearance-none cursor-pointer border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline" value={selectedState || ""} onChange={handleChange}>
                   <option value="" disabled>State</option>
                   {options}
                 </select>
@@ -109,17 +151,43 @@ function LocationPicker() {
                   id="ppec-zip"
                   type="text"
                   placeholder="Zip code"
-                  value={zipCode}
+                  value={zipCode || ""}
                   onChange={(event) => setZipCode(event.target.value)}
                 />
                 <p id='err-zip' className='text-left !mt-4 text-sm text-red-600 hidden'>* Zip code is required</p>
                 </div>
               </div>
+              <input id="lat"
+                className=' w-0 h-0'
+                value={lat || ""}
+                onChange={(event) => setLat(event.target.value)}
+              />
+              <input id="lng"
+                className=' w-0 h-0'
+                value={lng || ""}
+                onChange={(event) => setLng(event.target.value)}
+              />
             </div>
 
-      <div id="map" style={containerStyle}></div>
+            <GoogleMap
+              mapContainerStyle={mapContainerStyle}
+              center={center}
+              zoom={10}
+              id='map'
+            >
+              {selected ? (
+                <InfoWindow
+                  position={{ lat: 37.7749, lng: -122.4194 }}
+                  onCloseClick={() => setSelected(null)}
+                >
+                  <div>
+                    <h2>{selected}</h2>
+                  </div>
+                </InfoWindow>
+              ) : null}
+            </GoogleMap>
     </div>
   );
 }
 
-export default LocationPicker;
+export default React.memo(LocationPicker);

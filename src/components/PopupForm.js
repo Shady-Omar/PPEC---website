@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
 import LocationPicker from './LocationPicker';
+import { db } from "../firebase.js";
+import { collection, addDoc, GeoPoint } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 function PopupForm() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [centerName, setCenterName] = useState("");
   const [daysOfWeek, setDaysOfWeek] = useState({
-    monday: false,
-    tuesday: false,
-    wednesday: false,
-    thursday: false,
-    friday: false,
-    saturday: false,
-    sunday: false,
+    sunday: 1,
+    monday: 2,
+    tuesday: 3,
+    wednesday: 4,
+    thursday: 5,
+    friday: 6,
+    saturday: 7,
   });
+  
+  const [selectedDays, setSelectedDays] = useState([]);
 
   const [openingTime, setOpeningTime] = useState("");
   const [closingTime, setClosingTime] = useState("");
@@ -24,7 +29,10 @@ function PopupForm() {
     let centerCity = document.getElementById('ppec-city').value;
     let centerState = document.getElementById('state-select').value;
     let centerZip = document.getElementById('ppec-zip').value;
-    if (centerName === null || centerName === "" || centerAddress === null || centerAddress === "" || centerCity === null || centerCity === "" || centerState === null || centerState === "" || centerZip === null || centerZip === "" || (daysOfWeek.friday === false && daysOfWeek.monday === false && daysOfWeek.saturday === false && daysOfWeek.sunday === false && daysOfWeek.thursday === false && daysOfWeek.tuesday === false && daysOfWeek.wednesday === false) || openingTime === '' || openingTime === null || closingTime === '' || closingTime === null) {
+    let lat = document.getElementById('lat').value;
+    let lng = document.getElementById('lng').value;
+    const location = new GeoPoint(lat, lng);
+    if (centerName === null || centerName === "" || centerAddress === null || centerAddress === "" || centerCity === null || centerCity === "" || centerState === null || centerState === "" || centerZip === null || centerZip === "" || selectedDays.length === 0 || openingTime === '' || openingTime === null || closingTime === '' || closingTime === null) {
       if (centerName === null || centerName === "" ) {
         document.getElementById("err-name").classList.remove("hidden");
       } else {
@@ -50,7 +58,7 @@ function PopupForm() {
       } else {
         document.getElementById("err-zip").classList.add("hidden");
       }
-      if (daysOfWeek.friday === false && daysOfWeek.monday === false && daysOfWeek.saturday === false && daysOfWeek.sunday === false && daysOfWeek.thursday === false && daysOfWeek.tuesday === false && daysOfWeek.wednesday === false) {
+      if (selectedDays.length === 0) {
         document.getElementById("err-days").classList.remove("hidden");
       } else {
         document.getElementById("err-days").classList.add("hidden");
@@ -71,6 +79,41 @@ function PopupForm() {
         document.getElementById("err-time").classList.add("hidden");
       }
     } else {
+
+      try {
+        const auth = getAuth();
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          
+          const uid = user.uid;
+          const docRef = await addDoc(collection(db, "PPEC"), {
+            CNA: 0,
+            LPN: 0,
+            RN: 0,
+            admin: uid,
+            centerName: centerName,
+            centerAdressName: centerAddress,
+            clients: 0,
+            closeTime: closingTime,
+            openTime: openingTime,
+            opertionalDays: selectedDays,
+            complient: false,
+            country: "United States",
+            location: location,
+            onSiteCNA: 0,
+            onSiteLPN: 0,
+            radius: 500,
+            city: centerCity,
+            state: centerState,
+            zipCode: centerZip,
+          });
+          console.log("Document written with ID: ", docRef.id);
+        } else {
+          // User is signed out
+          // ...
+        }
+      });
+
       setIsSubmitted(true);
       setTimeout(() => {
         setIsOpen(false);
@@ -85,9 +128,15 @@ function PopupForm() {
           saturday: false,
           sunday: false,
         });
+        setSelectedDays([]);
         setOpeningTime("");
         setClosingTime("");
       }, 2000);
+      } catch (error) {
+        
+      }
+
+      
     }
   }
 
@@ -133,14 +182,22 @@ function PopupForm() {
               </label>
               <div className='flex flex-row justify-between w-full flex-wrap md:justify-between my-4 md:w-[90%]'>
                 <label htmlFor="sunday" className="inline-flex items-center">
-                  <input
-                    type="checkbox"
-                    id="sunday"
-                    name="daysOfWeek"
-                    value={daysOfWeek.sunday}
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    onChange={(event) => setDaysOfWeek(event.target.value)}
-                  />
+                <input
+                  type="checkbox"
+                  id="sunday"
+                  name="daysOfWeek"
+                  value={daysOfWeek.sunday}
+                  className="form-checkbox h-5 w-5 text-blue-600"
+                  onChange={(event) => {
+                    const value = Number(event.target.value);
+                    if (event.target.checked) {
+                      setSelectedDays([...selectedDays, value]);
+                      console.log(selectedDays);
+                    } else {
+                      setSelectedDays(selectedDays.filter((day) => day !== value));
+                    }
+                  }}
+                />
                   <span className="ml-2 text-gray-700">Sunday</span>
                 </label>
                 <label htmlFor="monday" className="inline-flex items-center">
@@ -150,7 +207,15 @@ function PopupForm() {
                     name="daysOfWeek"
                     value={daysOfWeek.monday}
                     className="form-checkbox h-5 w-5 text-blue-600"
-                    onChange={(event) => setDaysOfWeek(event.target.value)}
+                    onChange={(event) => {
+                      const value = Number(event.target.value);
+                      if (event.target.checked) {
+                        setSelectedDays([...selectedDays, value]);
+                        console.log(selectedDays);
+                      } else {
+                        setSelectedDays(selectedDays.filter((day) => day !== value));
+                      }
+                    }}
                   />
                   <span className="ml-2 text-gray-700">Monday</span>
                 </label>
@@ -161,7 +226,15 @@ function PopupForm() {
                     name="daysOfWeek"
                     value={daysOfWeek.tuesday}
                     className="form-checkbox h-5 w-5 text-blue-600"
-                    onChange={(event) => setDaysOfWeek(event.target.value)}
+                    onChange={(event) => {
+                      const value = Number(event.target.value);
+                      if (event.target.checked) {
+                        setSelectedDays([...selectedDays, value]);
+                        console.log(selectedDays);
+                      } else {
+                        setSelectedDays(selectedDays.filter((day) => day !== value));
+                      }
+                    }}
                   />
                   <span className="ml-2 text-gray-700">Tuesday</span>
                 </label>
@@ -172,7 +245,15 @@ function PopupForm() {
                     name="daysOfWeek"
                     value={daysOfWeek.wednesday}
                     className="form-checkbox h-5 w-5 text-blue-600"
-                    onChange={(event) => setDaysOfWeek(event.target.value)}
+                    onChange={(event) => {
+                      const value = Number(event.target.value);
+                      if (event.target.checked) {
+                        setSelectedDays([...selectedDays, value]);
+                        console.log(selectedDays);
+                      } else {
+                        setSelectedDays(selectedDays.filter((day) => day !== value));
+                      }
+                    }}
                   />
                   <span className="ml-2 text-gray-700">Wednesday</span>
                 </label>
@@ -183,7 +264,15 @@ function PopupForm() {
                     name="daysOfWeek"
                     value={daysOfWeek.thursday}
                     className="form-checkbox h-5 w-5 text-blue-600"
-                    onChange={(event) => setDaysOfWeek(event.target.value)}
+                    onChange={(event) => {
+                      const value = Number(event.target.value);
+                      if (event.target.checked) {
+                        setSelectedDays([...selectedDays, value]);
+                        console.log(selectedDays);
+                      } else {
+                        setSelectedDays(selectedDays.filter((day) => day !== value));
+                      }
+                    }}
                   />
                   <span className="ml-2 text-gray-700">Thursday</span>
                 </label>
@@ -195,7 +284,15 @@ function PopupForm() {
                     value={daysOfWeek.friday}
                     className="form-checkbox h-5 w-5 text-blue-600"
 
-                    onChange={(event) => setDaysOfWeek(event.target.value)}
+                    onChange={(event) => {
+                      const value = Number(event.target.value);
+                      if (event.target.checked) {
+                        setSelectedDays([...selectedDays, value]);
+                        console.log(selectedDays);
+                      } else {
+                        setSelectedDays(selectedDays.filter((day) => day !== value));
+                      }
+                    }}
                   />
                   <span className="ml-2 text-gray-700">Friday</span>
                 </label>
@@ -207,7 +304,15 @@ function PopupForm() {
                     value={daysOfWeek.saturday}
                     className="form-checkbox h-5 w-5 text-blue-600"
                   
-                    onChange={(event) => setDaysOfWeek(event.target.value)}
+                    onChange={(event) => {
+                      const value = Number(event.target.value);
+                      if (event.target.checked) {
+                        setSelectedDays([...selectedDays, value]);
+                        console.log(selectedDays);
+                      } else {
+                        setSelectedDays(selectedDays.filter((day) => day !== value));
+                      }
+                    }}
                   />
                   <span className="ml-2 text-gray-700">Saturday</span>
                 </label>
