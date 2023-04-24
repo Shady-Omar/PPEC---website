@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { db } from "../firebase.js";
 import { doc, getDocs, collection, updateDoc } from "firebase/firestore";
+import StaffForm from './StaffForm.js';
 
 function Details(props) {
 
@@ -14,8 +15,7 @@ function Details(props) {
   const [onSiteCNA, setOnSiteCNA] = useState("");
   const [compliance, setCompliance] = useState("");
   
-  let statusColor = document.getElementById('status');
-
+  
   async function ppecData() {
     
     const querySnapshot = await getDocs(collection(db, "PPEC"));
@@ -28,6 +28,7 @@ function Details(props) {
         setOnSiteRN(doc.data().onSiteRN)
         setOnSiteLPN(doc.data().onSiteLPN)
         setOnSiteCNA(doc.data().onSiteCNA)
+        let statusColor = document.getElementById('status');
         if (doc.data().complient === false) {
           setCompliance("Site Non-Compliant");
           statusColor.classList.add('bg-red-600');
@@ -43,6 +44,10 @@ function Details(props) {
   }
 
   ppecData()
+
+  let requiredRN = Math.ceil(clients / 5);
+  let requiredLPN = clients > 2 ? Math.ceil((clients - 2)/3) : 0;
+  let requiredCNA = Math.ceil(clients / 2);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -70,26 +75,26 @@ function Details(props) {
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">Clients On Site</p>
         </div>
         <div>
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">0</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{(requiredRN + requiredLPN + requiredCNA)}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">Staff Required</p>
         </div>
         <div>
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">0</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{(onSiteRN + onSiteLPN + onSiteCNA)}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">Staff On Site</p>
         </div>
 
       </div>
       <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 m-9">
         <div className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">0</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredRN}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">RN(s) Required</p>
         </div>
         <div className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">0</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredLPN}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">LPN(s) Required</p>
         </div>
         <div className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">0</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredCNA}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">CNA(s) Required</p>
         </div>
 
@@ -141,12 +146,7 @@ function Details(props) {
       </div>
 
       <div className="relative m-8">
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
-        // onClick={() => setIsOpen(true)}
-      >
-        Add Staff
-      </button>
+      <StaffForm myDocID={props.id}/>
       </div>
 
     </>

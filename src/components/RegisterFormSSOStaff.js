@@ -62,6 +62,7 @@ function RegFormStaffSSO() {
               isAdmin: false,
               photoUrl: downloadUrl,
               uid: user.uid,
+              PPEC: [],
             });
             
           } catch (e) {

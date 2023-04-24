@@ -89,6 +89,7 @@ function RegFormAdmin() {
             isAdmin: true,
             photoUrl: downloadUrl,
             uid: user.uid,
+            PPEC: [],
           });
         } catch (e) {
           console.error("Error adding document: ", e);

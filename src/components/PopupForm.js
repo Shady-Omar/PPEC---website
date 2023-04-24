@@ -82,7 +82,7 @@ function PopupForm() {
 
       try {
         const auth = getAuth();
-      onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, async (user) => {
         if (user) {
           
           const uid = user.uid;
