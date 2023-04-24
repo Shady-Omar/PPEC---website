@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from "../firebase.js";
-import { getDocs, collection } from "firebase/firestore";
+import { doc, getDocs, collection, updateDoc } from "firebase/firestore";
 
 function Details(props) {
 
@@ -8,6 +8,7 @@ function Details(props) {
   const [centerName, setCenterName] = useState("");
   const [centerAddress, setCenterAddress] = useState("");
   const [clients, setClients] = useState("");
+  const [clientsChange, setClientsChange] = useState("");
   const [onSiteRN, setOnSiteRN] = useState("");
   const [onSiteLPN, setOnSiteLPN] = useState("");
   const [onSiteCNA, setOnSiteCNA] = useState("");
@@ -39,9 +40,20 @@ function Details(props) {
 
   }
 
-  console.log(compliance)
   ppecData()
 
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    const PPECRef = doc(db, "PPEC", props.id);
+
+    // Set the "capital" field of the city 'DC'
+    await updateDoc(PPECRef, {
+      clients: clientsChange,
+    });
+    setClientsChange("")
+
+  }
 
   return (
     <>
@@ -99,6 +111,40 @@ function Details(props) {
         <div className=" bg-red-600 border-gray-800 border-4 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between my-5">
           <h4 className=" text-2xl font-bold text-gray-800 my-10">{compliance}</h4>
         </div>
+      </div>
+
+      <div className='m-9'>
+        <div className="flex flex-row items-center justify-center my-5">
+        <div
+          className="transform border-b-2 border-gray-400 bg-transparent text-lg duration-300 focus-within:border-indigo-500"
+        >
+          <input
+            type="number"
+            placeholder="Clients Number"
+            className="px-4 py-2 border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+            required
+            value={clientsChange}
+            onChange={(event) => setClientsChange(event.target.value)}
+          />
+        </div>
+          <button
+            className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-300 mx-2"
+            type="number"
+            onClick={handleSubmit}
+          >
+            Change
+
+          </button>
+        </div>
+      </div>
+
+      <div className="relative m-8">
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
+        // onClick={() => setIsOpen(true)}
+      >
+        Add Staff
+      </button>
       </div>
 
     </>
