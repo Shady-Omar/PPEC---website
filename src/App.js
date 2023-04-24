@@ -10,7 +10,7 @@ import RegisterSSO from './Pages/RegisterSSOPage';
 import RegisterSSOAdmin from './Pages/RegisterSSOAdminPage';
 import RegisterSSOStaff from './Pages/RegisterSSOStaffPage';
 import PPECDetails from './Pages/PPECDetails';
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route} from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 import { db } from "./firebase";
 import { getDocs, collection, query, where } from "firebase/firestore";
@@ -19,6 +19,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 function App() {
 
   const [documents, setDocuments] = useState([]);
+  const [DocumentsID, setDocumentsID] = useState([]);
 
   
 
@@ -32,7 +33,9 @@ function App() {
           const q = query(collection(db, "PPEC"), where("admin", "==", uid));
           const querySnapshot = await getDocs(q);
           const documentsData = querySnapshot.docs.map((doc) => doc.data());
+          const documentsID = querySnapshot.docs.map((doc) => doc.id);
           setDocuments(documentsData);
+          setDocumentsID(documentsID);
         }
     
         getAllDocuments();
@@ -59,7 +62,7 @@ function App() {
           <Route path='/register-SSO/staff' element={<RegisterSSOStaff/>}/>
           <Route path='/home' element={<HomePage/>}/>
           {documents.map((document, index) => (
-          <Route key={index} path={`/Home/PPEC-details-${document.centerName}`} element={<PPECDetails/>}/>
+          <Route key={index} path={`/Home/:ppecID`} element={<PPECDetails/>}/>
           ))}
         </Routes>
     </div>

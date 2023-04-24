@@ -1,13 +1,13 @@
+import { useParams } from 'react-router-dom';
 import Details from '../components/Details';
 
 function PPECDetails() {
 
-  const { state } = this.props.location
+  let {ppecID} = useParams()
 
   return (
-    <div className="Details">
-        <h1>{state}</h1>
-        <Details/>
+    <div className="Details  w-full">
+        <Details id={ppecID}/>
     </div>
   );
 }

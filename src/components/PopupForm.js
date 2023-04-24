@@ -100,6 +100,7 @@ function PopupForm() {
             complient: false,
             country: "United States",
             location: geoLocation,
+            onSiteRN: 0,
             onSiteCNA: 0,
             onSiteLPN: 0,
             radius: 500,
