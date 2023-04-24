@@ -14,7 +14,7 @@ function Details(props) {
   const [onSiteCNA, setOnSiteCNA] = useState("");
   const [compliance, setCompliance] = useState("");
   
-
+  let statusColor = document.getElementById('status');
 
   async function ppecData() {
     
@@ -30,8 +30,10 @@ function Details(props) {
         setOnSiteCNA(doc.data().onSiteCNA)
         if (doc.data().complient === false) {
           setCompliance("Site Non-Compliant");
+          statusColor.classList.add('bg-red-600');
         } else {
           setCompliance("Site Compliant");
+          statusColor.classList.add('bg-green-600');
         }
       }
   
@@ -108,7 +110,7 @@ function Details(props) {
 
       <div className='m-9'>
         <h1 className="text-4xl font-bold text-gray-800">COMPLIANCE STATUS</h1>
-        <div className=" bg-red-600 border-gray-800 border-4 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between my-5">
+        <div id='status' className= "border-gray-800 border-4 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between my-5">
           <h4 className=" text-2xl font-bold text-gray-800 my-10">{compliance}</h4>
         </div>
       </div>
