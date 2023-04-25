@@ -79,7 +79,7 @@ function Details(props) {
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">Staff Required</p>
         </div>
         <div>
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">{(onSiteRN + onSiteLPN + onSiteCNA)}</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{(onSiteRN + onSiteLPN + onSiteCNA) || 0}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">Staff On Site</p>
         </div>
 

@@ -3,6 +3,7 @@ import './App.css';
 import Navbar from './components/Navbar';
 import LoginPage from './Pages/LoginPage';
 import HomePage from './Pages/HomePage';
+import HomeStaff from './Pages/HomeStaff';
 import RegisterPage from './Pages/RegisterPage';
 import RegisterAdmin from './Pages/RegisterAdminPage';
 import RegisterStaff from './Pages/RegisterStaffPage';
@@ -61,6 +62,7 @@ function App() {
           <Route path='/register-SSO/admin' element={<RegisterSSOAdmin/>}/>
           <Route path='/register-SSO/staff' element={<RegisterSSOStaff/>}/>
           <Route path='/home' element={<HomePage/>}/>
+          <Route path='/staff-home' element={<HomeStaff/>}/>
           {documents.map((document, index) => (
           <Route key={index} path={`/Home/:ppecID`} element={<PPECDetails/>}/>
           ))}

@@ -66,6 +66,10 @@ function RegFormAdminSSO() {
               uid: user.uid,
               PPEC: [],
             });
+            setAdminNum("");
+            setAdminJob("");
+            
+            navigate("/Home");
           } catch (e) {
             console.error("Error adding document: ", e);
           }
@@ -73,10 +77,6 @@ function RegFormAdminSSO() {
         }
       });
 
-      setAdminNum("");
-      setAdminJob("");
-      
-      navigate("/Home");
     }
 
     

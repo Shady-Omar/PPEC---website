@@ -65,6 +65,10 @@ function RegFormStaffSSO() {
               PPEC: [],
             });
             
+            setStaffNum("");
+            setStaffJob("");
+            console.log("done")
+            // navigate("/Home");
           } catch (e) {
             console.error("Error adding document: ", e);
           }
@@ -72,10 +76,6 @@ function RegFormStaffSSO() {
         }
       });
 
-      setStaffNum("");
-      setStaffJob("");
-      
-      navigate("/Home");
     }
 
     

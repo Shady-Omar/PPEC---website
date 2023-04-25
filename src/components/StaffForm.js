@@ -35,7 +35,7 @@ function StaffForm(props) {
       document.getElementById('err-search').classList.add('hidden')
       document.getElementById('submit-btn').classList.remove('hidden')
       document.getElementById('user-data').classList.remove('hidden')
-      setStaffName(results[0].firstname + " " + (results[0].lastname || null));
+      setStaffName(results[0].firstname + " " + (results[0].lastname || ""));
       setStaffJob(results[0].jobTitle);
       setStaffID(results[0].uid);
     }

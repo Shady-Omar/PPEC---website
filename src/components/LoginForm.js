@@ -32,15 +32,15 @@ function LogForm() {
       const docRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
+      if (docSnap.exists() && docSnap.data().isAdmin === true) {
         navigate("/Home");
+      } else if (docSnap.exists() && docSnap.data().isAdmin === false) {
+        // navigate("/Home");
       } else {
         // docSnap.data() will be undefined in this case
-        console.log("No such document!");
         navigate("/register-SSO");
       }
 
-      
     })
     .catch((error) => {
       // Handle Errors here.
@@ -80,11 +80,12 @@ function LogForm() {
       const docRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
+      if (docSnap.exists() && docSnap.data().isAdmin === true) {
         navigate("/Home");
+      } else if (docSnap.exists() && docSnap.data().isAdmin === false) {
+        navigate("/staff-home");
       } else {
         // docSnap.data() will be undefined in this case
-        console.log("No such document!");
         navigate("/register-SSO");
       }
 
