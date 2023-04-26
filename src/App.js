@@ -51,7 +51,7 @@ function App() {
 
   return (
     <div className="App">
-        <Navbar />
+        
         
         <Routes>
           <Route path='/' element={<LoginPage />}/>
@@ -61,10 +61,10 @@ function App() {
           <Route path='/register-SSO' element={<RegisterSSO/>}/>
           <Route path='/register-SSO/admin' element={<RegisterSSOAdmin/>}/>
           <Route path='/register-SSO/staff' element={<RegisterSSOStaff/>}/>
-          <Route path='/home' element={<HomePage/>}/>
-          <Route path='/staff-home' element={<HomeStaff/>}/>
+          <Route path='/home' element={ <><Navbar/><HomePage/></> }/>
+          <Route path='/staff-home' element={<><Navbar/><HomeStaff/></>}/>
           {documents.map((document, index) => (
-          <Route key={index} path={`/Home/:ppecID`} element={<PPECDetails/>}/>
+          <Route key={index} path={`/Home/:ppecID`} element={<><Navbar/><PPECDetails/></>}/>
           ))}
         </Routes>
     </div>

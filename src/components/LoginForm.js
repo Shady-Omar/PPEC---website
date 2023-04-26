@@ -33,9 +33,9 @@ function LogForm() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists() && docSnap.data().isAdmin === true) {
-        navigate("/Home");
+        window.location.replace("/Home");
       } else if (docSnap.exists() && docSnap.data().isAdmin === false) {
-        // navigate("/Home");
+        window.location.replace("/staff-home");
       } else {
         // docSnap.data() will be undefined in this case
         navigate("/register-SSO");
@@ -81,9 +81,9 @@ function LogForm() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists() && docSnap.data().isAdmin === true) {
-        navigate("/Home");
+        window.location.replace("/Home");
       } else if (docSnap.exists() && docSnap.data().isAdmin === false) {
-        navigate("/staff-home");
+        window.location.replace("/staff-home");
       } else {
         // docSnap.data() will be undefined in this case
         navigate("/register-SSO");

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { db } from "../firebase.js";
 import { doc, setDoc } from "firebase/firestore"; 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
@@ -19,6 +19,10 @@ function RegFormAdmin() {
 
   let navigate = useNavigate();
 
+  const auth = getAuth();
+  const email = adminEmail;
+
+
   const handlePhotoInput = (e) => {
     setSelectedPhoto(e.target.files[0]);
   };
@@ -29,87 +33,97 @@ function RegFormAdmin() {
     var emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     var numRegex = /1?[\s-]?\(?(\d{3})\)?[\s-]?\d{3}[\s-]?\d{4}/;
 
-    if (adminFirst === null || adminFirst === "" || adminLast === null || adminLast === "" || !adminEmail.match(emailRegex) || adminPass === null || adminPass === "" || adminPass.length < 6 || !adminNum.match(numRegex) || adminJob === null || adminJob === "") {
-      if (adminFirst === null || adminFirst === "" ) {
-        document.getElementById("err-first").classList.remove("hidden");
-      } else {
-        document.getElementById("err-first").classList.add("hidden");
-      }
-      if (adminLast === null || adminLast === "" ) {
-        document.getElementById("err-last").classList.remove("hidden");
-      } else {
-        document.getElementById("err-last").classList.add("hidden");
-      }
-      if (!adminEmail.match(emailRegex)) {
-        document.getElementById("err-email").classList.remove("hidden");
-      } else {
-        document.getElementById("err-email").classList.add("hidden");
-      }
-      if (adminPass === null || adminPass === "" || adminPass.length < 6) {
-        document.getElementById("err-pass-length").classList.remove("hidden");
-      } else {
-        document.getElementById("err-pass-length").classList.add("hidden");
-      }
-      if (!adminNum.match(numRegex)) {
-        document.getElementById("err-num-reg").classList.remove("hidden");
-      } else {
-        document.getElementById("err-num-reg").classList.add("hidden");
-      }
-      if (adminJob === null || adminJob === "" ) {
-        document.getElementById("err-job").classList.remove("hidden");
-      } else {
-        document.getElementById("err-job").classList.add("hidden");
-      }
-    } else {
-      
-      
 
-      const auth = getAuth();
-      createUserWithEmailAndPassword(auth, adminEmail, adminPass)
-      .then(async(userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        try {
-
-          // Upload file to Firebase Storage
-          const storage = getStorage();
-          const storageRef = ref(storage, `images/${adminEmail}/${selectedPhoto.name}`);
-          await uploadBytes(storageRef, selectedPhoto);
-          
-          // Get download URL of file
-          const downloadUrl = await getDownloadURL(storageRef);
-          setPhotoUrl(downloadUrl);
-
-          await setDoc(doc(db, "users", user.uid), {
-            firstname: adminFirst,
-            lastname: adminLast,
-            email: adminEmail,
-            phoneNum: Number(adminNum),
-            jobTitle: adminJob,
-            isAdmin: true,
-            photoUrl: downloadUrl,
-            uid: user.uid,
-            PPEC: [],
+    fetchSignInMethodsForEmail(auth, email)
+      .then((signInMethods) => {
+        if (adminFirst === null || adminFirst === "" || adminLast === null || adminLast === "" || !adminEmail.match(emailRegex) || signInMethods.length > 0 || adminPass === null || adminPass === "" || adminPass.length < 6 || !adminNum.match(numRegex) || adminJob === null || adminJob === "") {
+          if (adminFirst === null || adminFirst === "" ) {
+            document.getElementById("err-first").classList.remove("hidden");
+          } else {
+            document.getElementById("err-first").classList.add("hidden");
+          }
+          if (adminLast === null || adminLast === "" ) {
+            document.getElementById("err-last").classList.remove("hidden");
+          } else {
+            document.getElementById("err-last").classList.add("hidden");
+          }
+          if (!adminEmail.match(emailRegex)) {
+            document.getElementById("err-email").classList.remove("hidden");
+          } else {
+            document.getElementById("err-email").classList.add("hidden");
+          }
+          if (signInMethods.length > 0) {
+            // If the email is associated with an existing user account, redirect to the home page
+            document.getElementById("err-email-exist").classList.remove("hidden");
+          } else {
+            // If the email is not associated with an existing user account, continue with the sign-in process
+            document.getElementById("err-email-exist").classList.add("hidden");
+          }
+          if (adminPass === null || adminPass === "" || adminPass.length < 6) {
+            document.getElementById("err-pass-length").classList.remove("hidden");
+          } else {
+            document.getElementById("err-pass-length").classList.add("hidden");
+          }
+          if (!adminNum.match(numRegex)) {
+            document.getElementById("err-num-reg").classList.remove("hidden");
+          } else {
+            document.getElementById("err-num-reg").classList.add("hidden");
+          }
+          if (adminJob === null || adminJob === "" ) {
+            document.getElementById("err-job").classList.remove("hidden");
+          } else {
+            document.getElementById("err-job").classList.add("hidden");
+          }
+        } else {
+          createUserWithEmailAndPassword(auth, adminEmail, adminPass)
+          .then(async(userCredential) => {
+            // Signed in 
+            const user = userCredential.user;
+            try {
+    
+              // Upload file to Firebase Storage
+              const storage = getStorage();
+              const storageRef = ref(storage, `images/${adminEmail}/${selectedPhoto.name}`);
+              await uploadBytes(storageRef, selectedPhoto);
+              
+              // Get download URL of file
+              const downloadUrl = await getDownloadURL(storageRef);
+              setPhotoUrl(downloadUrl);
+    
+              await setDoc(doc(db, "users", user.uid), {
+                firstname: adminFirst,
+                lastname: adminLast,
+                email: adminEmail,
+                phoneNum: Number(adminNum),
+                jobTitle: adminJob,
+                isAdmin: true,
+                photoUrl: downloadUrl,
+                uid: user.uid,
+                PPEC: [],
+              });
+            } catch (e) {
+              console.error("Error adding document: ", e);
+            }
+          })
+          .catch((error) => {
+            // const errorCode = error.code;
+            // const errorMessage = error.message;
+            // ..
           });
-        } catch (e) {
-          console.error("Error adding document: ", e);
+        
+          setAdminFirst("");
+          setAdminLast("");
+          setAdminEmail("");
+          setAdminPass("");
+          setAdminNum("");
+          setAdminJob("");
+    
+          navigate("/");
         }
       })
       .catch((error) => {
-        // const errorCode = error.code;
-        // const errorMessage = error.message;
-        // ..
+        // Handle any errors here
       });
-    
-      setAdminFirst("");
-      setAdminLast("");
-      setAdminEmail("");
-      setAdminPass("");
-      setAdminNum("");
-      setAdminJob("");
-
-      navigate("/");
-    }
 
     
   };
@@ -161,6 +175,7 @@ function RegFormAdmin() {
       />
     </div>
     <p id='err-email' className='!mt-2 text-left text-red-600 hidden'>* Email address is required</p>
+    <p id='err-email-exist' className='!mt-2 text-left text-red-600 hidden'>* Email address already exists</p>
 
     <div
       className="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500"
