@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
 
@@ -107,6 +107,26 @@ function LogForm() {
     });
 
   }
+
+  useEffect(() => {
+    // Check if user is already signed in
+    const auth = getAuth();
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // User is already signed in, navigate to home page
+
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists() && docSnap.data().isAdmin === true) {
+          window.location.replace("/Home");
+        } else if (docSnap.exists() && docSnap.data().isAdmin === false) {
+          window.location.replace("/staff-home");
+        }
+      }
+    });
+  }, []);
+
 
   const submit = async (e) => {
     e.preventDefault();
