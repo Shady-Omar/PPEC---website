@@ -86,7 +86,7 @@ function PopupForm() {
         if (user) {
           
           const uid = user.uid;
-          const docRef = await addDoc(collection(db, "PPEC"), {
+          await addDoc(collection(db, "PPEC"), {
             CNA: 0,
             LPN: 0,
             RN: 0,
@@ -107,6 +107,7 @@ function PopupForm() {
             city: centerCity,
             state: centerState,
             zipCode: centerZip,
+            PPEC: [],
           });
         } else {
           // User is signed out
@@ -344,7 +345,7 @@ function PopupForm() {
                   onChange={(event) => setClosingTime(event.target.value)}
                 />
               </div>
-              <p id='err-time' className='text-left text-sm text-red-600 text-center hidden'>* Invalid Opening / Closing Time</p>
+              <p id='err-time' className='text-sm text-red-600 text-center hidden'>* Invalid Opening / Closing Time</p>
             <div className="flex items-center justify-between">
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-300"

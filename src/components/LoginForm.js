@@ -33,9 +33,9 @@ function LogForm() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists() && docSnap.data().isAdmin === true) {
-        window.location.replace("/Home");
+        // window.location.replace("/");
       } else if (docSnap.exists() && docSnap.data().isAdmin === false) {
-        window.location.replace("/staff-home");
+        // window.location.replace("/");
       } else {
         // docSnap.data() will be undefined in this case
         navigate("/register-SSO");
@@ -81,9 +81,9 @@ function LogForm() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists() && docSnap.data().isAdmin === true) {
-        window.location.replace("/Home");
+        // window.location.replace("/");
       } else if (docSnap.exists() && docSnap.data().isAdmin === false) {
-        window.location.replace("/staff-home");
+        // window.location.replace("/");
       } else {
         // docSnap.data() will be undefined in this case
         navigate("/register-SSO");
@@ -108,24 +108,9 @@ function LogForm() {
 
   }
 
-  useEffect(() => {
-    // Check if user is already signed in
-    const auth = getAuth();
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // User is already signed in, navigate to home page
-
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists() && docSnap.data().isAdmin === true) {
-          window.location.replace("/Home");
-        } else if (docSnap.exists() && docSnap.data().isAdmin === false) {
-          window.location.replace("/staff-home");
-        }
-      }
-    });
-  }, []);
+  // useEffect(() => {
+    
+  // }, []);
 
 
   const submit = async (e) => {

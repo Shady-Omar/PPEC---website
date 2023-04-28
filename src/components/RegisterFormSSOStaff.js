@@ -68,7 +68,7 @@ function RegFormStaffSSO() {
             setStaffNum("");
             setStaffJob("");
             console.log("done")
-            // navigate("/Home");
+            // navigate("/");
           } catch (e) {
             console.error("Error adding document: ", e);
           }

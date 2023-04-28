@@ -69,7 +69,7 @@ function RegFormAdminSSO() {
             setAdminNum("");
             setAdminJob("");
             
-            navigate("/Home");
+            navigate("/");
           } catch (e) {
             console.error("Error adding document: ", e);
           }

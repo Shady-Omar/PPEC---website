@@ -8,12 +8,12 @@ function Navbar() {
 
    const handleLogout = () => {
       signOut(auth)
-      .then(() => {
-      window.location.replace("/"); // Redirect to login page
-      })
-      .catch((error) => {
-      console.log(error.message);
-      });
+      // .then(() => {
+      // window.location.replace("/"); // Redirect to login page
+      // })
+      // .catch((error) => {
+      // console.log(error.message);
+      // });
    };
 
    return (
