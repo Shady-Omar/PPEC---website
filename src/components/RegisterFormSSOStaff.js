@@ -57,7 +57,7 @@ function RegFormStaffSSO() {
               firstname: user.displayName,
               lastname: "",
               email: user.email,
-              phoneNum: Number(staffNum),
+              phoneNum: `${Number(staffNum)}`,
               jobTitle: staffJob,
               isAdmin: false,
               photoUrl: downloadUrl,
@@ -67,7 +67,6 @@ function RegFormStaffSSO() {
             
             setStaffNum("");
             setStaffJob("");
-            console.log("done")
             // navigate("/");
           } catch (e) {
             console.error("Error adding document: ", e);

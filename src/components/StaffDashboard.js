@@ -30,28 +30,31 @@ function StaffDashboard() {
           const ppecArray = querySnapshot.docs.map((doc) => doc.data().PPEC);
           setPPECArray(ppecArray[0]);
           const querySnapshotx = await getDocs(collection(db, "PPEC")); // Fix 2: Move this outside of the loop
-          for (let i = 0; i < ppecArray[0].length; i++) {
-            querySnapshotx.forEach((doc) => {
-              if (doc.id === ppecArray[0][i]) {
-                documents.push(doc.data());
-              }
-              
-            });
+          if (ppecArray[0]) {
+
+            for (let i = 0; i < ppecArray[0].length; i++) {
+              querySnapshotx.forEach((doc) => {
+                if (doc.id === ppecArray[0][i]) {
+                  documents.push(doc.data());
+                }
+                
+              });
+            }
+            setDocuments(documents); // Fix 1: Update the documents state with the retrieved data
+            for (let i = 0; i < ppecArray[0].length; i++) {
+              const q2 = query(collection(db, "PPEC", ppecArray[0][i], "staff"), where("staffId", "==", uid));
+              const querySnapshot2 = await getDocs(q2);
+              const staffJob = querySnapshot2.docs.map((doc) => doc.data().jobTitle);
+              const ClockIn = querySnapshot2.docs.map((doc) => doc.data().clockIn);
+              const ClockOut = querySnapshot2.docs.map((doc) => doc.data().clockOut);
+              staffJobTitle.push(staffJob[0]);
+              staffClockIn.push(ClockIn[0]);
+              staffClockOut.push(ClockOut[0]);
+            }
+            setStaffJobTitle(staffJobTitle);
+            setStaffClockIn(staffClockIn);
+            setStaffClockOut(staffClockOut);
           }
-          setDocuments(documents); // Fix 1: Update the documents state with the retrieved data
-          for (let i = 0; i < ppecArray[0].length; i++) {
-            const q2 = query(collection(db, "PPEC", ppecArray[0][i], "staff"), where("staffId", "==", uid));
-            const querySnapshot2 = await getDocs(q2);
-            const staffJob = querySnapshot2.docs.map((doc) => doc.data().jobTitle);
-            const ClockIn = querySnapshot2.docs.map((doc) => doc.data().clockIn);
-            const ClockOut = querySnapshot2.docs.map((doc) => doc.data().clockOut);
-            staffJobTitle.push(staffJob[0]);
-            staffClockIn.push(ClockIn[0]);
-            staffClockOut.push(ClockOut[0]);
-          }
-          setStaffJobTitle(staffJobTitle);
-          setStaffClockIn(staffClockIn);
-          setStaffClockOut(staffClockOut);
         }
         getAllDocuments();
       } else {

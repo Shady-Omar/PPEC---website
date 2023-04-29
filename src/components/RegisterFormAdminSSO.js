@@ -59,7 +59,7 @@ function RegFormAdminSSO() {
               firstname: user.displayName,
               lastname: "",
               email: user.email,
-              phoneNum: Number(adminNum),
+              phoneNum: `${Number(adminNum)}`,
               jobTitle: adminJob,
               isAdmin: true,
               photoUrl: downloadUrl,

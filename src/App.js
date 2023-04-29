@@ -52,7 +52,7 @@ function App() {
 
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1500); // set a timeout of 2 seconds to simulate page loading
+    }, 600); // set a timeout of 2 seconds to simulate page loading
 
     return () => clearTimeout(timer);
 
@@ -60,7 +60,7 @@ function App() {
   }, [])
 
   if (isLoading) {
-    return <div className="flex flex-col items-center justify-center h-screen bg-gray-900">
+    return <div className="flex flex-col items-center justify-center h-screen bg-gray-900 overflow-y-hidden">
             <div className="flex items-center justify-center scale-[2]">
               <FontAwesomeIcon icon={faSpinner} className="animate-spin text-white" />
             </div>

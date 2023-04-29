@@ -3,6 +3,9 @@ import LocationPicker from './LocationPicker';
 import { db } from "../firebase.js";
 import { collection, addDoc, GeoPoint } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import TimePicker from "rc-time-picker";
+import 'rc-time-picker/assets/index.css';
+import moment from 'moment';
 
 function PopupForm() {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +35,7 @@ function PopupForm() {
     let lat = document.getElementById('lat').value;
     let lng = document.getElementById('lng').value;
     const geoLocation = new GeoPoint(lat, lng);
-    if (centerName === null || centerName === "" || centerAddress === null || centerAddress === "" || centerCity === null || centerCity === "" || centerState === null || centerState === "" || centerZip === null || centerZip === "" || selectedDays.length === 0 || openingTime === '' || openingTime === null || closingTime === '' || closingTime === null) {
+    if (centerName === null || centerName === "" || centerAddress === null || centerAddress === "" || centerCity === null || centerCity === "" || centerState === null || centerState === "" || centerZip === null || centerZip === "" || selectedDays.length === 0 || openingTime === '' || openingTime === null || closingTime === '' || closingTime === null || openingTime >= closingTime) {
       if (centerName === null || centerName === "" ) {
         document.getElementById("err-name").classList.remove("hidden");
       } else {
@@ -193,8 +196,7 @@ function PopupForm() {
                   onChange={(event) => {
                     const value = Number(event.target.value);
                     if (event.target.checked) {
-                      setSelectedDays([...selectedDays, value]);
-                      console.log(selectedDays);
+                      setSelectedDays([...selectedDays, value])
                     } else {
                       setSelectedDays(selectedDays.filter((day) => day !== value));
                     }
@@ -213,7 +215,6 @@ function PopupForm() {
                       const value = Number(event.target.value);
                       if (event.target.checked) {
                         setSelectedDays([...selectedDays, value]);
-                        console.log(selectedDays);
                       } else {
                         setSelectedDays(selectedDays.filter((day) => day !== value));
                       }
@@ -232,7 +233,6 @@ function PopupForm() {
                       const value = Number(event.target.value);
                       if (event.target.checked) {
                         setSelectedDays([...selectedDays, value]);
-                        console.log(selectedDays);
                       } else {
                         setSelectedDays(selectedDays.filter((day) => day !== value));
                       }
@@ -251,7 +251,6 @@ function PopupForm() {
                       const value = Number(event.target.value);
                       if (event.target.checked) {
                         setSelectedDays([...selectedDays, value]);
-                        console.log(selectedDays);
                       } else {
                         setSelectedDays(selectedDays.filter((day) => day !== value));
                       }
@@ -270,7 +269,6 @@ function PopupForm() {
                       const value = Number(event.target.value);
                       if (event.target.checked) {
                         setSelectedDays([...selectedDays, value]);
-                        console.log(selectedDays);
                       } else {
                         setSelectedDays(selectedDays.filter((day) => day !== value));
                       }
@@ -290,7 +288,6 @@ function PopupForm() {
                       const value = Number(event.target.value);
                       if (event.target.checked) {
                         setSelectedDays([...selectedDays, value]);
-                        console.log(selectedDays);
                       } else {
                         setSelectedDays(selectedDays.filter((day) => day !== value));
                       }
@@ -310,7 +307,6 @@ function PopupForm() {
                       const value = Number(event.target.value);
                       if (event.target.checked) {
                         setSelectedDays([...selectedDays, value]);
-                        console.log(selectedDays);
                       } else {
                         setSelectedDays(selectedDays.filter((day) => day !== value));
                       }
@@ -325,25 +321,41 @@ function PopupForm() {
                 <label htmlFor="opening-time" className="text-gray-700">
                   Opening Time
                 </label>
-                <input
+                <TimePicker
+                  placeholder="Select Time"
+                  use12Hours
+                  showSecond={false}
+                  focusOnOpen={true}
+                  value={openingTime ? moment(openingTime, 'HH:mm') : null}
+                  onChange={(value) => setOpeningTime(value.format('HH:mm'))}
+                />
+                {/* <input
                   type="time"
                   id="opening-time"
                   name="openingTime"
                   value={openingTime}
                   className="shadow appearance-none border rounded w-3/4 lg:w-1/5 mb-4 py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
                   onChange={(event) => setOpeningTime(event.target.value)}
-                />
-                <label htmlFor="closing-time" className="text-gray-700">
+                /> */}
+                <label htmlFor="closing-time" className="text-gray-700 sm:!mt-2">
                   Closing Time
                 </label>
-                <input
+                <TimePicker
+                  placeholder="Select Time"
+                  use12Hours
+                  showSecond={false}
+                  focusOnOpen={true}
+                  value={closingTime ? moment(closingTime, 'HH:mm') : null}
+                  onChange={(value) => setClosingTime(value.format('HH:mm'))}
+                />
+                {/* <input
                   type="time"
                   id="closing-time"
                   name="closingTime"
                   value={closingTime}
                   className="shadow appearance-none border rounded w-3/4 lg:w-1/5 mb-4 py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
                   onChange={(event) => setClosingTime(event.target.value)}
-                />
+                /> */}
               </div>
               <p id='err-time' className='text-sm text-red-600 text-center hidden'>* Invalid Opening / Closing Time</p>
             <div className="flex items-center justify-between">

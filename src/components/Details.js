@@ -86,28 +86,28 @@ function Details(props) {
       </div>
       <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 m-9">
         <div className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredRN}</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredRN || 0}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">RN(s) Required</p>
         </div>
         <div className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredLPN}</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredLPN || 0}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">LPN(s) Required</p>
         </div>
         <div className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredCNA}</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredCNA || 0}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">CNA(s) Required</p>
         </div>
 
         <div className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">{onSiteRN}</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{onSiteRN || 0}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">RN(s) On Site</p>
         </div>
         <div className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">{onSiteLPN}</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{onSiteLPN || 0}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">LPN(s) On Site</p>
         </div>
         <div className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">{onSiteCNA}</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{onSiteCNA || 0}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">CNA(s) On Site</p>
         </div>
 

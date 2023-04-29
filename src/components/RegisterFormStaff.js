@@ -96,7 +96,7 @@ function RegFormStaff() {
               firstname: staffFirst,
               lastname: staffLast,
               email: staffEmail,
-              phoneNum: staffNum,
+              phoneNum: `${Number(staffNum)}`,
               jobTitle: staffJob,
               isAdmin: false,
               photoUrl: downloadUrl,

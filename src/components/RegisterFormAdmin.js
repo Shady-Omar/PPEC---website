@@ -94,7 +94,7 @@ function RegFormAdmin() {
                 firstname: adminFirst,
                 lastname: adminLast,
                 email: adminEmail,
-                phoneNum: Number(adminNum),
+                phoneNum: `${Number(adminNum)}`,
                 jobTitle: adminJob,
                 isAdmin: true,
                 photoUrl: downloadUrl,

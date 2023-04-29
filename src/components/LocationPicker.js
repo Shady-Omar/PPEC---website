@@ -55,7 +55,6 @@ function LocationPicker() {
 
     window.google.maps.event.addListener(map, 'click', (event) => {      
         marker.setPosition(event.latLng);
-      // console.log(event.latLng.lat())
 
       Geocode.setApiKey("AIzaSyC52uvc5kD2YvHTPot-yN1HweJ_b3qIGKQ");
       setLat(`${event.latLng.lat()}`)

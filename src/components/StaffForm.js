@@ -19,14 +19,23 @@ function StaffForm(props) {
 
   const searchFirestoreCollection = async (e) => {
     e.preventDefault();
-    const q = query(collection(db, 'users'), where('email', '==', searchQuery));
-    const querySnapshot = await getDocs(q);
+
     const results = [];
+    const querySnapshot = await getDocs(collection(db, "users"));
     querySnapshot.forEach((doc) => {
-      if (doc.data().isAdmin === false) {
-        results.push(doc.data());
+      // doc.data() is never undefined for query doc snapshots
+      
+      if (doc.data().email.toLowerCase() === searchQuery.toLowerCase()) {
+          if (doc.data().isAdmin === false) {
+            results.push(doc.data());
+          }
       }
+    
     });
+
+    // const q = query(collection(db, 'users'), where('email', '==', searchQuery));
+    // const querySnapshot = await getDocs(q);
+    
     if (results.length === 0) {
       document.getElementById('err-search').classList.remove('hidden');
       document.getElementById('submit-btn').classList.add('hidden');
@@ -39,7 +48,6 @@ function StaffForm(props) {
       setStaffJob(results[0].jobTitle);
       setStaffID(results[0].uid);
     }
-    console.log(results);
   }
 
   async function handleSubmit(event) {
@@ -102,7 +110,6 @@ function StaffForm(props) {
           // window.location.reload();
         }, 2000);
       } catch (error) {
-        console.log(error);
       }
 
 

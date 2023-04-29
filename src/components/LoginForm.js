@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
 
@@ -20,11 +20,10 @@ function LogForm() {
     .then(async(result) => {
       // The signed-in user info.
       const user = result.user;
-      console.log(user);
+      
       // This gives you a Facebook Access Token. You can use it to access the Facebook API.
       const credential = FacebookAuthProvider.credentialFromResult(result);
       const accessToken = credential.accessToken;
-      console.log(accessToken);
 
       // IdP data available using getAdditionalUserInfo(result)
       // ...
@@ -45,15 +44,11 @@ function LogForm() {
     .catch((error) => {
       // Handle Errors here.
       const errorCode = error.code;
-      console.log(errorCode);
       const errorMessage = error.message;
-      console.log(errorMessage);
       // The email of the user's account used.
       const email = error.customData.email;
-      console.log(email);
       // The AuthCredential type that was used.
       const credential = FacebookAuthProvider.credentialFromError(error);
-      console.log(credential);
 
       // ...
     });
@@ -71,10 +66,8 @@ function LogForm() {
       // This gives you a Google Access Token. You can use it to access the Google API.
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential.accessToken;
-      console.log(token)
       // The signed-in user info.
       const user = result.user;
-      console.log(user)
       // IdP data available using getAdditionalUserInfo(result)
       // ...
       const docRef = doc(db, "users", user.uid);
@@ -93,16 +86,12 @@ function LogForm() {
     }).catch((error) => {
       // Handle Errors here.
       const errorCode = error.code;
-      console.log(errorCode)
       const errorMessage = error.message;
-      console.log(errorMessage)
       // The email of the user's account used.
       const email = error.customData.email;
-      console.log(email)
       
       // The AuthCredential type that was used.
       const credential = GoogleAuthProvider.credentialFromError(error);
-      console.log(credential)
       // ...
     });
 
@@ -121,7 +110,6 @@ function LogForm() {
     .then((userCredential) => {
       // Signed in 
       const user = userCredential.user;
-      console.log(user)
       // ...
       setLogEmail("");
       setLogPass("");
