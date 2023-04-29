@@ -23,41 +23,37 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 function App() {
 
   const [isLogged, setIsLogged] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoading, setIsLoading] = useState(true)
+const [isAdmin, setIsAdmin] = useState(false);
+const [isLoading, setIsLoading] = useState(true);
 
-
-  useEffect(()=>{
-
-    // Check if user is already signed in
-    const auth = getAuth();
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // User is already signed in, navigate to home page
-        
-        setIsLogged(true);
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists() && docSnap.data().isAdmin === true) {
-          setIsAdmin(true);
-          // window.location.replace("/");
-        } else if (docSnap.exists() && docSnap.data().isAdmin === false) {
-          // window.location.replace("/");
-          setIsAdmin(false);
-        }
-      } else {
-        setIsLogged(false);
+useEffect(() => {
+  // Check if user is already signed in
+  const auth = getAuth();
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      // User is already signed in, navigate to home page
+      setIsLogged(true);
+      const docRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists() && docSnap.data().isAdmin === true) {
+        setIsAdmin(true);
+        // window.location.replace("/");
+      } else if (docSnap.exists() && docSnap.data().isAdmin === false) {
+        // window.location.replace("/");
+        setIsAdmin(false);
       }
-    });
+      setIsLoading(false); // Firebase response loaded successfully, stop timer
+    } else {
+      setIsLogged(false);
+      setIsLoading(false); // Firebase response loaded successfully, stop timer
+    }
+  });
 
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 600); // set a timeout of 2 seconds to simulate page loading
+  const timer = setTimeout(() => {
+    setIsLoading(false);
+  }, 100000); // set a timeout of 2 seconds to simulate page loading
 
-    return () => clearTimeout(timer);
-
-
-  }, [])
+}, []);
 
   if (isLoading) {
     return <div className="flex flex-col items-center justify-center h-screen bg-gray-900 overflow-y-hidden">
