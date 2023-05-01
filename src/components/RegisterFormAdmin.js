@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { db } from "../firebase.js";
-import { doc, setDoc } from "firebase/firestore"; 
-import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "firebase/auth";
+import { doc, setDoc, getDocs, collection } from "firebase/firestore"; 
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
+
+async function getAllDataFromCollection() {
+  const querySnapshot = await getDocs(collection(db, "users"));
+  const data = querySnapshot.docs.map((doc) => doc.data().email);
+  return data;
+}
 
 function RegFormAdmin() {
 
@@ -16,11 +22,29 @@ function RegFormAdmin() {
   const [adminJob, setAdminJob] = useState("");
   const [selectedPhoto, setSelectedPhoto] = useState("");
   const [photoUrl, setPhotoUrl] = useState('');
+  const [duplicateEmail, setDuplicateEmail] = useState('');
 
   let navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getAllDataFromCollection();
+      setDuplicateEmail(data);
+    };
+    fetchData();
+  }, []);
+  
+  function duplicate(array) {
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] === adminEmail) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
   const auth = getAuth();
-  const email = adminEmail;
 
 
   const handlePhotoInput = (e) => {
@@ -33,10 +57,7 @@ function RegFormAdmin() {
     var emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     var numRegex = /1?[\s-]?\(?(\d{3})\)?[\s-]?\d{3}[\s-]?\d{4}/;
 
-
-    fetchSignInMethodsForEmail(auth, email)
-      .then((signInMethods) => {
-        if (adminFirst === null || adminFirst === "" || adminLast === null || adminLast === "" || !adminEmail.match(emailRegex) || signInMethods.length > 0 || adminPass === null || adminPass === "" || adminPass.length < 6 || !adminNum.match(numRegex) || adminJob === null || adminJob === "") {
+        if (adminFirst === null || adminFirst === "" || adminLast === null || adminLast === "" || !adminEmail.match(emailRegex) || duplicate(duplicateEmail) === true || adminPass === null || adminPass === "" || adminPass.length < 6 || !adminNum.match(numRegex) || adminJob === null || adminJob === "") {
           if (adminFirst === null || adminFirst === "" ) {
             document.getElementById("err-first").classList.remove("hidden");
           } else {
@@ -52,7 +73,7 @@ function RegFormAdmin() {
           } else {
             document.getElementById("err-email").classList.add("hidden");
           }
-          if (signInMethods.length > 0) {
+          if (duplicate(duplicateEmail) === true) {
             // If the email is associated with an existing user account, redirect to the home page
             document.getElementById("err-email-exist").classList.remove("hidden");
           } else {
@@ -120,12 +141,6 @@ function RegFormAdmin() {
     
           navigate("/");
         }
-      })
-      .catch((error) => {
-        // Handle any errors here
-      });
-
-    
   };
 
   return (

@@ -130,39 +130,43 @@ function LogForm() {
   <section className="flex w-[30rem] flex-col space-y-10  scale-90">
     <div className="text-center text-4xl font-medium">Log In</div>
 
-    <div
-      className="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500"
+    <form
+      onSubmit={submit}
     >
-      <input
-        type="text"
-        placeholder="Email Address"
-        className="w-full px-4 py-2 border-none bg-transparent outline-none placeholder:italic focus:outline-none"
-        value={logEmail}
-        onChange={(e) => setLogEmail(e.target.value)}
-        required
-      />
-    </div>
+      <div
+        className="w-full mb-6 transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500"
+      >
+        <input
+          type="text"
+          placeholder="Email Address"
+          className="w-full px-4 py-2 border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+          value={logEmail}
+          onChange={(e) => setLogEmail(e.target.value)}
+          required
+        />
+      </div>
 
-    <div
-      className="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500"
-    >
-      <input
-        type="password"
-        placeholder="Password"
-        className="w-full px-4 py-2 border-none bg-transparent outline-none placeholder:italic focus:outline-none"
-        value={logPass}
-        onChange={(e) => setLogPass(e.target.value)}
-        required
-      />
-    </div>
-    <p id='err-log' className='!mt-2 text-left text-red-600 hidden'>* Invalid email or password. Please try again.</p>
+      <div
+        className="w-full mb-6 transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500"
+      >
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full px-4 py-2 border-none bg-transparent outline-none placeholder:italic focus:outline-none"
+          value={logPass}
+          onChange={(e) => setLogPass(e.target.value)}
+          required
+        />
+      </div>
+      <p id='err-log' className='!mt-2 text-left text-red-600 hidden'>* Invalid email or password. Please try again.</p>
 
-    <button
-      className="transform rounded-sm bg-indigo-600 py-2 font-bold duration-300 hover:bg-indigo-400"
-      onClick={submit}
-    >
-      Sign in
-    </button>
+      <button
+        type='submit'
+        className=" w-full mt-8 transform rounded-sm bg-indigo-600 py-2 font-bold duration-300 hover:bg-indigo-400"
+      >
+        Sign in
+      </button>
+    </form>
     <button
       className="transform rounded-sm bg-[#3B5998] py-2 font-bold duration-300 hover:bg-[#8B9DC3] !mt-4"
       onClick={signWithFacebook}

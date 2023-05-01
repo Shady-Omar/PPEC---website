@@ -8,6 +8,9 @@ function Navbar() {
 
    const handleLogout = () => {
       signOut(auth)
+      .then(() => {
+         window.location.replace("/");
+      })
    };
 
    return (

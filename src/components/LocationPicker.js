@@ -96,19 +96,19 @@ function LocationPicker() {
 
 
     
-    const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode({ address: address }, (results, status) => {
-      if (status === 'OK') {
-        map.setCenter(results[0].geometry.location);
-        const marker = new window.google.maps.Marker({
-          map: map,
-          position: results[0].geometry.location
-        });
-      } else {
-        // console.log('Geocode was not successful for the following reason:', status);
-      }
-    });
-  }, [address]);
+    // const geocoder = new window.google.maps.Geocoder();
+    // geocoder.geocode({ address: address }, (results, status) => {
+    //   if (status === 'OK') {
+    //     map.setCenter(results[0].geometry.location);
+    //     const marker = new window.google.maps.Marker({
+    //       map: map,
+    //       position: results[0].geometry.location
+    //     });
+    //   } else {
+    //     // console.log('Geocode was not successful for the following reason:', status);
+    //   }
+    // });
+  }, []);
 
   return (
     <div className="mb-4">

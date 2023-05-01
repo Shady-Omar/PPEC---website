@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { db } from "../firebase.js";
-import { doc, setDoc } from "firebase/firestore"; 
-import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "firebase/auth";
+import { doc, setDoc, getDocs, collection } from "firebase/firestore"; 
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
+
+async function getAllDataFromCollection() {
+  const querySnapshot = await getDocs(collection(db, "users"));
+  const data = querySnapshot.docs.map((doc) => doc.data().email);
+  return data;
+}
 
 function RegFormStaff() {
 
@@ -16,6 +22,7 @@ function RegFormStaff() {
   const [staffJob, setStaffJob] = useState("");
   const [selectedPhoto, setSelectedPhoto] = useState("");
   const [photoUrl, setPhotoUrl] = useState('');
+  const [duplicateEmail, setDuplicateEmail] = useState('');
 
   let navigate = useNavigate();
 
@@ -23,17 +30,32 @@ function RegFormStaff() {
     setSelectedPhoto(e.target.files[0]);
   };
 
-  const auth = getAuth();
-  const email = staffEmail;
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getAllDataFromCollection();
+      setDuplicateEmail(data);
+    };
+    fetchData();
+  }, []);
+  
+  function duplicate(array) {
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] === staffEmail) {
+        return true;
+      }
+    }
+    return false;
+  }
 
+  const auth = getAuth();
+  
   const submit = async (e) => {
     e.preventDefault();
 
     var emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     var numRegex = /1?[\s-]?\(?(\d{3})\)?[\s-]?\d{3}[\s-]?\d{4}/;
-    fetchSignInMethodsForEmail(auth, email)
-      .then((signInMethods) => {
-      if (staffFirst === null || staffFirst === "" || staffLast === null || staffLast === "" || !staffEmail.match(emailRegex) || signInMethods.length > 0 || staffPass === null || staffPass === "" || staffPass.length < 6 || !staffNum.match(numRegex) || staffJob === null || staffJob === "") {
+
+      if (staffFirst === null || staffFirst === "" || staffLast === null || staffLast === "" || !staffEmail.match(emailRegex) || duplicate(duplicateEmail) === true ||staffPass === null || staffPass === "" || staffPass.length < 6 || !staffNum.match(numRegex) || staffJob === null || staffJob === "") {
         if (staffFirst === null || staffFirst === "" ) {
           document.getElementById("err-first").classList.remove("hidden");
         } else {
@@ -49,13 +71,15 @@ function RegFormStaff() {
         } else {
           document.getElementById("err-email").classList.add("hidden");
         }
-        if (signInMethods.length > 0) {
+
+        if (duplicate(duplicateEmail) === true) {
           // If the email is associated with an existing user account, redirect to the home page
           document.getElementById("err-email-exist").classList.remove("hidden");
         } else {
           // If the email is not associated with an existing user account, continue with the sign-in process
           document.getElementById("err-email-exist").classList.add("hidden");
         }
+        
         if (staffPass === null || staffPass === "" || staffPass.length < 6) {
           document.getElementById("err-pass-length").classList.remove("hidden");
         } else {
@@ -72,9 +96,6 @@ function RegFormStaff() {
           document.getElementById("err-job").classList.add("hidden");
         }
       } else {
-        
-        
-
         
         createUserWithEmailAndPassword(auth, staffEmail, staffPass)
         .then(async(userCredential) => {
@@ -122,10 +143,6 @@ function RegFormStaff() {
         
         navigate("/");
       }
-    })
-    .catch((error) => {
-      // Handle any errors here
-    });
 
   };
 

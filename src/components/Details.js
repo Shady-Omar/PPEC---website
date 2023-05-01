@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { db } from "../firebase.js";
-import { doc, getDocs, collection, updateDoc } from "firebase/firestore";
+import { doc, getDocs, collection, updateDoc, onSnapshot } from "firebase/firestore";
 import StaffForm from './StaffForm.js';
 
 function Details(props) {
@@ -25,9 +25,7 @@ function Details(props) {
         setCenterName(doc.data().centerName);
         setCenterAddress(doc.data().centerAdressName);
         setClients(doc.data().clients)
-        setOnSiteRN(doc.data().onSiteRN)
-        setOnSiteLPN(doc.data().onSiteLPN)
-        setOnSiteCNA(doc.data().onSiteCNA)
+        
         let statusColor = document.getElementById('status');
         if (doc.data().complient === false) {
           setCompliance("Site Non-Compliant");
@@ -39,6 +37,14 @@ function Details(props) {
       }
   
   
+    });
+
+    const unsub = onSnapshot(doc(db, "PPEC", props.id), (doc) => {
+      if (doc.id === props.id) {
+        setOnSiteRN(doc.data().onSiteRN)
+        setOnSiteLPN(doc.data().onSiteLPN)
+        setOnSiteCNA(doc.data().onSiteCNA)
+      }
     });
 
   }
@@ -75,11 +81,11 @@ function Details(props) {
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">Clients On Site</p>
         </div>
         <div>
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">{(requiredRN + requiredLPN + requiredCNA)}</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{((requiredRN || 0) + (requiredLPN || 0) + (requiredCNA || 0))}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">Staff Required</p>
         </div>
         <div>
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">{(onSiteRN + onSiteLPN + onSiteCNA) || 0}</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{((onSiteRN || 0) + (onSiteLPN || 0) + (onSiteCNA || 0))}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">Staff On Site</p>
         </div>
 
