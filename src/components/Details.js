@@ -25,25 +25,27 @@ function Details(props) {
         setCenterName(doc.data().centerName);
         setCenterAddress(doc.data().centerAdressName);
         setClients(doc.data().clients)
-        
-        let statusColor = document.getElementById('status');
-        if (doc.data().complient === false) {
-          setCompliance("Site Non-Compliant");
-          statusColor.classList.add('bg-red-600');
-        } else {
-          setCompliance("Site Compliant");
-          statusColor.classList.add('bg-green-600');
-        }
       }
   
   
     });
 
-    const unsub = onSnapshot(doc(db, "PPEC", props.id), (doc) => {
+    onSnapshot(doc(db, "PPEC", props.id), (doc) => {
       if (doc.id === props.id) {
         setOnSiteRN(doc.data().onSiteRN)
         setOnSiteLPN(doc.data().onSiteLPN)
         setOnSiteCNA(doc.data().onSiteCNA)
+
+        let statusColor = document.getElementById('status');
+        if (doc.data().complient === false) {
+          setCompliance("Site Non-Compliant");
+          statusColor.classList.remove('bg-green-600');
+          statusColor.classList.add('bg-red-600');
+        } else if (doc.data().complient === true) {
+          setCompliance("Site Compliant");
+          statusColor.classList.remove('bg-red-600');
+          statusColor.classList.add('bg-green-600');
+        }
       }
     });
 
