@@ -106,11 +106,10 @@ function PopupForm() {
             onSiteRN: 0,
             onSiteCNA: 0,
             onSiteLPN: 0,
-            radius: 500,
+            radius: 200,
             city: centerCity,
             state: centerState,
             zipCode: centerZip,
-            PPEC: [],
           });
         } else {
           // User is signed out

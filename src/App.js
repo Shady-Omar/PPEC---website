@@ -19,6 +19,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import History from './Pages/history';
+import DateHistory from './Pages/DateHistory';
 
 function App() {
 
@@ -83,6 +85,8 @@ useEffect(() => {
           <Route path='/register-SSO/admin' element={<RegisterSSOAdmin/>}/>
           <Route path='/register-SSO/staff' element={<RegisterSSOStaff/>}/>
           <Route path={`/:ppecID`} element={<><Navbar/><PPECDetails/></>}/>
+          <Route path='/:ppecID/history' element={<><Navbar/><History/></>}/>
+          <Route path='/:ppecID/history/:Date' element={<><Navbar/><DateHistory/></>}/>
         </Routes>
     </div>
   );

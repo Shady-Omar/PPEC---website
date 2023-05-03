@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { db } from "../firebase.js";
-import { doc, getDocs, collection, updateDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDocs, getDoc, collection, updateDoc, onSnapshot, setDoc, arrayUnion } from "firebase/firestore";
 import StaffForm from './StaffForm.js';
+import { Link } from 'react-router-dom'
 
 function Details(props) {
 
@@ -10,12 +11,48 @@ function Details(props) {
   const [centerAddress, setCenterAddress] = useState("");
   const [clients, setClients] = useState("");
   const [clientsChange, setClientsChange] = useState("");
+  const [RN, setRN] = useState("");
+  const [LPN, setLPN] = useState("");
+  const [CNA, setCNA] = useState("");
   const [onSiteRN, setOnSiteRN] = useState("");
   const [onSiteLPN, setOnSiteLPN] = useState("");
   const [onSiteCNA, setOnSiteCNA] = useState("");
   const [compliance, setCompliance] = useState("");
+  const [complianceState, setComplianceState] = useState("");
+  const [adminID, setAdminID] = useState("");
+  const [openTime, setOpenTime] = useState("");
+  const [closeTime, setCloseTime] = useState("");
+  const [opDays, setOpDays] = useState("");
+  const [geoLocation, setGeoLocation] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [zip, setZip] = useState("");
+  const [requiredRN, setRequiredRN] = useState("");
+  const [requiredLPN, setRequiredLPN] = useState("");
+  const [requiredCNA, setRequiredCNA] = useState("");
   
   
+  function getTodayDateRepresentation() {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
+
+  function getCurrentTime() {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const amOrPm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    const timeString = `${formattedHours}:${formattedMinutes} ${amOrPm}`;
+
+    return timeString;
+  }
+
   async function ppecData() {
     
     const querySnapshot = await getDocs(collection(db, "PPEC"));
@@ -24,7 +61,26 @@ function Details(props) {
       if (doc.id === props.id) {
         setCenterName(doc.data().centerName);
         setCenterAddress(doc.data().centerAdressName);
-        setClients(doc.data().clients)
+        setRN(doc.data().RN);
+        setLPN(doc.data().LPN);
+        setCNA(doc.data().CNA);
+        setAdminID(doc.data().admin);
+        setOpenTime(doc.data().openTime);
+        setCloseTime(doc.data().closeTime);
+        setOpDays(doc.data().opertionalDays)
+        setGeoLocation(doc.data().location)
+        setCity(doc.data().city)
+        setState(doc.data().state)
+        setZip(doc.data().zipCode)
+        setComplianceState(doc.data().complient)
+        
+
+        setClients(doc.data().clients);
+
+        setRequiredRN(Math.ceil(clients / 5)) ;
+        setRequiredLPN(clients > 2 ? Math.ceil((clients - 2)/3) : 0)
+        setRequiredCNA(Math.ceil(clients / 2));
+
       }
   
   
@@ -35,38 +91,98 @@ function Details(props) {
         setOnSiteRN(doc.data().onSiteRN)
         setOnSiteLPN(doc.data().onSiteLPN)
         setOnSiteCNA(doc.data().onSiteCNA)
+        
 
+        
         let statusColor = document.getElementById('status');
-        if (doc.data().complient === false) {
-          setCompliance("Site Non-Compliant");
-          statusColor.classList.remove('bg-green-600');
-          statusColor.classList.add('bg-red-600');
-        } else if (doc.data().complient === true) {
-          setCompliance("Site Compliant");
-          statusColor.classList.remove('bg-red-600');
-          statusColor.classList.add('bg-green-600');
+        if (statusColor) {
+
+          if (doc.data().complient === false) {
+            setCompliance("Site Non-Compliant");
+            statusColor.classList.remove('bg-green-600');
+            statusColor.classList.add('bg-red-600');
+          } else if (doc.data().complient === true) {
+            setCompliance("Site Compliant");
+            statusColor.classList.remove('bg-red-600');
+            statusColor.classList.add('bg-green-600');
+          }
         }
       }
     });
 
   }
 
-  ppecData()
-
-  let requiredRN = Math.ceil(clients / 5);
-  let requiredLPN = clients > 2 ? Math.ceil((clients - 2)/3) : 0;
-  let requiredCNA = Math.ceil(clients / 2);
+  ppecData();
 
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const PPECRef = doc(db, "PPEC", props.id);
+    if (clientsChange === "") {
+      document.getElementById("err-change").classList.remove("hidden");
+    } else {
+      document.getElementById("err-change").classList.add("hidden");
+      const PPECRef = doc(db, "PPEC", props.id);
 
-    // Set the "capital" field of the city 'DC'
     await updateDoc(PPECRef, {
       clients: clientsChange,
     });
+
+    const docRef = doc(db, "PPEC", props.id, "history", getTodayDateRepresentation());
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      onSnapshot(doc(db, "PPEC", props.id),async (docx) => {
+        if (docx.id === props.id) {
+  
+  
+          setClients(docx.data().clients);
+  
+          setRequiredRN(Math.ceil(clientsChange / 5)) ;
+          setRequiredLPN(clientsChange > 2 ? Math.ceil((clientsChange - 2)/3) : 0)
+          setRequiredCNA(Math.ceil(clientsChange / 2));
+  
+          const HistoryRef = doc(db, "PPEC", props.id, "history", getTodayDateRepresentation());
+          await updateDoc(HistoryRef, {
+            ClientsChanges: arrayUnion(`${getCurrentTime()} ${clientsChange} clients present, ${Math.ceil(clientsChange / 5)} RN needed, ${Math.ceil(clientsChange / 2)} CNA needed, ${clientsChange > 2 ? Math.ceil((clientsChange - 2)/3) : 0} LPN needed`),
+          });
+          console.log(requiredRN);
+          console.log(requiredLPN);
+          console.log(requiredCNA);
+        }
+      });
+    } else {
+      
+      await setDoc(doc(db, "PPEC", props.id, "history", getTodayDateRepresentation()), {
+        CNA: CNA,
+        LPN: LPN,
+        RN: RN,
+        admin: adminID,
+        centerName: centerName,
+        centerAdressName: centerAddress,
+        clients: clientsChange,
+        closeTime: closeTime,
+        openTime: openTime,
+        opertionalDays: opDays,
+        complient: complianceState,
+        country: "United States",
+        location: geoLocation,
+        onSiteRN: onSiteRN || 0,
+        onSiteCNA: onSiteCNA || 0,
+        onSiteLPN: onSiteLPN || 0,
+        radius: 200,
+        city: city,
+        state: state,
+        zipCode: zip,
+        ClientsChanges: arrayUnion(`${getCurrentTime()} ${clientsChange} clients present, ${Math.ceil(clientsChange / 5)} RN needed, ${Math.ceil(clientsChange / 2)} CNA needed, ${clientsChange > 2 ? Math.ceil((clientsChange - 2)/3) : 0} LPN needed`),
+        ComplianceUpdate: [],
+        staffTracking: [],
+      });
+
+    }
+
     setClientsChange("")
+    }
+    
 
   }
 
@@ -76,6 +192,11 @@ function Details(props) {
         <h1 className="text-4xl font-bold text-gray-800">{centerName}</h1>
         <p className="text-gray-600 mt-2">{centerAddress}</p>
       </div>
+
+      <div className='mt-8'>
+        <Link to={`/${props.id}/history`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300">history</Link>
+      </div>
+
 
       <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 m-9">
         <div>
@@ -140,6 +261,7 @@ function Details(props) {
             required
             value={clientsChange}
             onChange={(event) => setClientsChange(event.target.value)}
+            min={0}
           />
         </div>
           <button
@@ -151,6 +273,7 @@ function Details(props) {
 
           </button>
         </div>
+        <p id='err-change' className='text-center text-sm text-red-600 hidden'>* This field can't be empty</p>
       </div>
 
       <div className="relative m-8">

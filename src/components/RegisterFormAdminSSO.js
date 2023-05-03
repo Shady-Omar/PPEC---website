@@ -139,11 +139,6 @@ function RegFormAdminSSO() {
     >
       Continue
     </button>
-
-    {/* <p className="text-center text-lg !mt-4">
-      Already have an account?
-      <span className="font-medium text-indigo-500 underline-offset-4 hover:underline cursor-pointer"> <Link to="/">Sign In</Link> </span>
-    </p> */}
   </section>
 </main>
   );
