@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import LocationPicker from './LocationPicker';
 import { db } from "../firebase.js";
-import { collection, addDoc, GeoPoint } from "firebase/firestore";
+import { collection, addDoc, GeoPoint, setDoc, doc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import TimePicker from "rc-time-picker";
 import 'rc-time-picker/assets/index.css';
@@ -25,6 +25,14 @@ function PopupForm() {
 
   const [openingTime, setOpeningTime] = useState("");
   const [closingTime, setClosingTime] = useState("");
+
+  function getTodayDateRepresentation() {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -89,7 +97,7 @@ function PopupForm() {
         if (user) {
           
           const uid = user.uid;
-          await addDoc(collection(db, "PPEC"), {
+          let ppecRef = await addDoc(collection(db, "PPEC"), {
             CNA: 0,
             LPN: 0,
             RN: 0,
@@ -110,6 +118,32 @@ function PopupForm() {
             city: centerCity,
             state: centerState,
             zipCode: centerZip,
+          });
+
+          await setDoc(doc(db, "PPEC", ppecRef.id, "history", getTodayDateRepresentation()), {
+            CNA: 0,
+            LPN: 0,
+            RN: 0,
+            admin: uid,
+            centerName: centerName,
+            centerAdressName: centerAddress,
+            clients: 0,
+            closeTime: closingTime,
+            openTime: openingTime,
+            opertionalDays: selectedDays,
+            complient: false,
+            country: "United States",
+            location: geoLocation,
+            onSiteRN: 0,
+            onSiteCNA: 0,
+            onSiteLPN: 0,
+            radius: 200,
+            city: centerCity,
+            state: centerState,
+            zipCode: centerZip,
+            staffTracking: [],
+            ClientsChanges: [],
+            ComplianceUpdate: [],
           });
         } else {
           // User is signed out

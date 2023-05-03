@@ -38,7 +38,50 @@ function DateDetails(props) {
       margin: 10,
       padding: 10,
       flexGrow: 1
-    }
+    },
+    list: {
+      margin: 12,
+      fontSize: 14,
+    },
+    listItem: {
+      flexDirection: 'row',
+      marginBottom: 5,
+    },
+    listItemBullet: {
+      width: 10,
+      fontSize: 14,
+      textAlign: 'center',
+    },
+    listItemContent: {
+      flex: 1,
+      fontSize: 14,
+    },
+    staffItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 5,
+    },
+    staffItemAvatar: {
+      width: 40,
+      height: 40,
+      marginRight: 10,
+      borderRadius: 20,
+    },
+    staffItemName: {
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    staffItemTitle: {
+      fontSize: 14,
+    },
+    staffContainer: {
+      marginTop: 20,
+      borderWidth: 1,
+      borderColor: '#ddd',
+      borderRadius: 5,
+      padding: 10,
+      alignItems: 'center',
+    },
   });
 
   useEffect(() => {
