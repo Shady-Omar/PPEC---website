@@ -14,6 +14,7 @@ function StaffContainer(props) {
   const [staffClockIn, setClockInTime] = useState('');
   const [staffClockOut, setClockOutTime] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedStaff, setSelectedStaff] = useState(null);
 
   useEffect(()=>{
     async function getAllDocuments() {
@@ -68,7 +69,6 @@ function StaffContainer(props) {
       } else {
         document.getElementById("err-time").classList.add("hidden");
       }
-      console.log(`${staffName} ${staffEmail}, ${staffJob}, ${staffClockIn}, ${staffClockOut}`)
     } else {
       try {
         
@@ -105,6 +105,7 @@ function StaffContainer(props) {
           <p className="mb-4 mt-2 text-sm text-gray-600">{document.email}</p>
           <div className='w-full flex flex-row justify-evenly items-center'>
           <button onClick={() => {
+            setSelectedStaff(document);
             setIsOpen(true);
             setSelectedUser(document);
             setStaffName(document.firstName);
@@ -117,9 +118,9 @@ function StaffContainer(props) {
           </button>
             <button onClick={() => handleRemove(document.staffId)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300 mb-4">Delete</button>
           </div>
-          {isOpen && (
+          {isOpen && selectedStaff === document && (
             <div
-              id='form-container'
+              id={`form-container-${index}`}
               className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 overflow-y-scroll"
               onClick={() => setIsOpen(false)}
             >
