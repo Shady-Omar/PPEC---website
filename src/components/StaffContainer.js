@@ -28,6 +28,15 @@ function StaffContainer(props) {
     getAllDocuments()
   }, [])
 
+
+  function getTodayDateRepresentation() {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
   async function handleRemove(id) {
     if (window.confirm("Do you really want to delete this center ?")) {
       await deleteDoc(doc(db, "PPEC", props.id, "staff", id)).then()
@@ -74,6 +83,16 @@ function StaffContainer(props) {
         
         const userRef = doc(db, "PPEC", props.id, "staff", selectedUser.staffId);
         await setDoc(userRef, {
+          firstName: staffName,
+          email: staffEmail,
+          jobTitle: staffJob,
+          clockIn: staffClockIn,
+          clockOut: staffClockOut,
+          staffId:selectedUser.staffId,
+        });
+
+        const historyRef = doc(db, "PPEC", props.id, "history", getTodayDateRepresentation(), "staff", selectedUser.staffId);
+        await setDoc(historyRef, {
           firstName: staffName,
           email: staffEmail,
           jobTitle: staffJob,
