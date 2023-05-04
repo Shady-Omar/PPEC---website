@@ -42,18 +42,18 @@ function PpecCenterContainer() {
 
   return (
     <>
-    <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 m-9">
-      {documents.map((document, index) => (
+      <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 m-9">
+        {documents.map((document, index) => (
 
-      <div key={index} className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
-        <h4 className="text-lg font-bold text-gray-800 mt-4">{document.centerName}</h4>
-        <p className="mt-2 text-sm text-gray-600">{document.centerAdressName}</p>
-        <Link to={`/${DocumentsID[index]}`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300 mt-4 mb-4">View Details</Link>
+        <div key={index} className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
+          <h4 className="text-lg font-bold text-gray-800 mt-4">{document.centerName}</h4>
+          <p className="mt-2 text-sm text-gray-600">{document.centerAdressName}</p>
+          <Link to={`/${DocumentsID[index]}`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300 mt-4 mb-4">View Details</Link>
+        </div>
+
+
+        ))}
       </div>
-
-
-      ))}
-    </div>
     </>
   );
 }

@@ -11,6 +11,7 @@ import RegisterSSO from './Pages/RegisterSSOPage';
 import RegisterSSOAdmin from './Pages/RegisterSSOAdminPage';
 import RegisterSSOStaff from './Pages/RegisterSSOStaffPage';
 import PPECDetails from './Pages/PPECDetails';
+import StaffDetails from './Pages/StaffDetails';
 
 import { Routes, Route} from "react-router-dom";
 import React, { useState, useEffect } from 'react';
@@ -87,6 +88,7 @@ useEffect(() => {
           <Route path={`/:ppecID`} element={<><Navbar/><PPECDetails/></>}/>
           <Route path='/:ppecID/history' element={<><Navbar/><History/></>}/>
           <Route path='/:ppecID/history/:Date' element={<><Navbar/><DateHistory/></>}/>
+          <Route path='/:ppecID/staff' element={<><Navbar/><StaffDetails/></>}/>
         </Routes>
     </div>
   );

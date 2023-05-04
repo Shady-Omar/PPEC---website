@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { db } from "../firebase.js";
-import { doc, getDocs, getDoc, collection, updateDoc, onSnapshot, setDoc, arrayUnion } from "firebase/firestore";
+import { doc, getDocs, getDoc, collection, updateDoc, onSnapshot, setDoc, arrayUnion, deleteDoc } from "firebase/firestore";
 import StaffForm from './StaffForm.js';
 import { Link } from 'react-router-dom'
 
@@ -114,6 +114,13 @@ function Details(props) {
 
   ppecData();
 
+  async function handleDelete() {
+    if (window.confirm("Do you really want to delete this center ?")) {
+      await deleteDoc(doc(db, "PPEC", props.id)).then()
+      window.location.replace("/")
+    }
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -195,6 +202,9 @@ function Details(props) {
 
       <div className='mt-8'>
         <Link to={`/${props.id}/history`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300">history</Link>
+      </div>
+      <div className='mt-8'>
+        <Link to={`/${props.id}/staff`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300">show staff</Link>
       </div>
 
 
@@ -278,6 +288,15 @@ function Details(props) {
 
       <div className="relative m-8">
       <StaffForm myDocID={props.id}/>
+      </div>
+
+      <div className='mb-8'>
+        <button
+        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
+        onClick={handleDelete}
+        >
+          Delete Center
+        </button>
       </div>
 
     </>

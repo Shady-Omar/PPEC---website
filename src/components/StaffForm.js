@@ -17,6 +17,15 @@ function StaffForm(props) {
     setSearchQuery(event.target.value);
   }
 
+
+  function getTodayDateRepresentation() {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
   const searchFirestoreCollection = async (e) => {
     e.preventDefault();
 
@@ -32,9 +41,6 @@ function StaffForm(props) {
       }
     
     });
-
-    // const q = query(collection(db, 'users'), where('email', '==', searchQuery));
-    // const querySnapshot = await getDocs(q);
     
     if (results.length === 0) {
       document.getElementById('err-search').classList.remove('hidden');
@@ -80,17 +86,35 @@ function StaffForm(props) {
           jobTitle: staffJob,
           staffId: staffID,
         });
+        
+        await setDoc(doc(db, "PPEC", props.myDocID, "history", getTodayDateRepresentation(),"staff", staffID), {
+          clockIn: clockInTime,
+          clockOut: clockOutTime,
+          email: searchQuery,
+          firstName: staffName,
+          jobTitle: staffJob,
+          staffId: staffID,
+        });
 
         if (staffJob === "RN") {
           await updateDoc(doc(db, "PPEC", props.myDocID), {
+            RN: increment(1)
+          });
+          await updateDoc(doc(db, "PPEC", props.myDocID, "history", getTodayDateRepresentation()), {
             RN: increment(1)
           });
         } else if (staffJob === "LPN") {
           await updateDoc(doc(db, "PPEC", props.myDocID), {
             LPN: increment(1)
           });
+          await updateDoc(doc(db, "PPEC", props.myDocID, "history", getTodayDateRepresentation()), {
+            LPN: increment(1)
+          });
         } else if (staffJob === "CNA") {
           await updateDoc(doc(db, "PPEC", props.myDocID), {
+            CNA: increment(1)
+          });
+          await updateDoc(doc(db, "PPEC", props.myDocID, "history", getTodayDateRepresentation()), {
             CNA: increment(1)
           });
         }
