@@ -121,6 +121,8 @@ function RegFormAdmin() {
                 photoUrl: downloadUrl,
                 uid: user.uid,
                 PPEC: [],
+                NotificationChannels: { email: false, "in-app-notifications": true, sms: false },
+                NotificationFrequency: { "daily-summaries": false, "real-time-alerts": true, "weekly-overviews": false },
               });
             } catch (e) {
               console.error("Error adding document: ", e);

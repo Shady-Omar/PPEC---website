@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom'
 
 function Details(props) {
 
-
   const [centerName, setCenterName] = useState("");
   const [centerAddress, setCenterAddress] = useState("");
   const [clients, setClients] = useState("");
