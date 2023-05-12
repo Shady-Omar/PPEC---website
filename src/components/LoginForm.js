@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider, OAuthProvider  } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
 
@@ -97,6 +97,53 @@ function LogForm() {
 
   }
 
+
+  const signWithApple = async (e) => {
+    e.preventDefault();
+    
+    const provider = new OAuthProvider('apple.com');
+    signInWithPopup(auth, provider)
+    .then(async(result) => {
+
+      // Apple credential
+      const credential = OAuthProvider.credentialFromResult(result);
+      const accessToken = credential.accessToken;
+      const idToken = credential.idToken;
+
+      console.log(credential);
+      // The signed-in user info.
+      const user = result.user;
+      // IdP data available using getAdditionalUserInfo(result)
+      // ...
+      const docRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists() && docSnap.data().isAdmin === true) {
+        // window.location.replace("/");
+      } else if (docSnap.exists() && docSnap.data().isAdmin === false) {
+        // window.location.replace("/");
+      } else {
+        // docSnap.data() will be undefined in this case
+        navigate("/register-SSO");
+      }
+
+
+    }).catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      console.log(errorCode);
+      const errorMessage = error.message;
+      console.log(errorMessage);
+      // The email of the user's account used.
+      const email = error.customData.email;
+      
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      // ...
+    });
+
+  }
+
   // useEffect(() => {
     
   // }, []);
@@ -181,6 +228,7 @@ function LogForm() {
     </button>
     <button
       className="transform rounded-sm bg-[#D4D4D2] text-[#1C1C1C] py-2 font-bold duration-300 hover:bg-[#1C1C1C] hover:text-[#D4D4D2] !mt-4"
+      onClick={signWithApple}
     >
       Sign in with Apple ID
     </button>
