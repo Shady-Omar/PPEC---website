@@ -38,7 +38,7 @@ function StaffContainer(props) {
   }
 
   async function handleRemove(id) {
-    if (window.confirm("Do you really want to delete this center ?")) {
+    if (window.confirm("Do you really want to delete this Staff ?")) {
       await deleteDoc(doc(db, "PPEC", props.id, "staff", id)).then()
       window.location.replace(`/${props.id}`)
     }
