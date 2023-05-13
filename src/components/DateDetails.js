@@ -111,7 +111,7 @@ function DateDetails(props) {
       setStaffData(documentsData);
     }
     getAllDocuments();
-  }, [props.date, props.id]);
+  }, []);
 
   const daysPDF = opDays.map((day, index) => (
     <Text className="mb-2 text-gray-600" key={index}>{day === 1? "Sunday": day === 2? "Monday" : day === 3? "Tuesday" : day === 4? "Wednesday" : day === 5? "Thursday" :day === 6 ? "Friday" : day === 7? "Saturday" :null}</Text>

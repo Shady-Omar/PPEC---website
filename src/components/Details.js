@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from "../firebase.js";
 import { doc, getDocs, getDoc, collection, updateDoc, onSnapshot, setDoc, arrayUnion, deleteDoc } from "firebase/firestore";
 import StaffForm from './StaffForm.js';
@@ -52,66 +52,73 @@ function Details(props) {
     return timeString;
   }
 
-  async function ppecData() {
+
+  useEffect(() => {
+  
+    async function ppecData() {
     
-    const querySnapshot = await getDocs(collection(db, "PPEC"));
-    querySnapshot.forEach(async(doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      if (doc.id === props.id) {
-        setCenterName(doc.data().centerName);
-        setCenterAddress(doc.data().centerAdressName);
-        setRN(doc.data().RN);
-        setLPN(doc.data().LPN);
-        setCNA(doc.data().CNA);
-        setAdminID(doc.data().admin);
-        setOpenTime(doc.data().openTime);
-        setCloseTime(doc.data().closeTime);
-        setOpDays(doc.data().opertionalDays)
-        setGeoLocation(doc.data().location)
-        setCity(doc.data().city)
-        setState(doc.data().state)
-        setZip(doc.data().zipCode)
-        setComplianceState(doc.data().complient)
-        
-
-        setClients(doc.data().clients);
-
-        setRequiredRN(Math.ceil(clients / 5)) ;
-        setRequiredLPN(clients > 2 ? Math.ceil((clients - 2)/3) : 0)
-        setRequiredCNA(Math.ceil(clients / 2));
-
-      }
+      const querySnapshot = await getDocs(collection(db, "PPEC"));
+      querySnapshot.forEach(async(doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        if (doc.id === props.id) {
+          setCenterName(doc.data().centerName);
+          setCenterAddress(doc.data().centerAdressName);
+          setRN(doc.data().RN);
+          setLPN(doc.data().LPN);
+          setCNA(doc.data().CNA);
+          setAdminID(doc.data().admin);
+          setOpenTime(doc.data().openTime);
+          setCloseTime(doc.data().closeTime);
+          setOpDays(doc.data().opertionalDays)
+          setGeoLocation(doc.data().location)
+          setCity(doc.data().city)
+          setState(doc.data().state)
+          setZip(doc.data().zipCode)
+          setComplianceState(doc.data().complient)
+          
+          console.log(geoLocation);
+          setClients(doc.data().clients);
+          
+          setRequiredRN(Math.ceil(clients / 5)) ;
+          setRequiredLPN(clients > 2 ? Math.ceil((clients - 2)/3) : 0)
+          setRequiredCNA(Math.ceil(clients / 2));
+          
+        }
+    
+    
+      });
+      
+      onSnapshot(doc(db, "PPEC", props.id), (doc) => {
+        if (doc.id === props.id) {
+          setOnSiteRN(doc.data().onSiteRN)
+          setOnSiteLPN(doc.data().onSiteLPN)
+          setOnSiteCNA(doc.data().onSiteCNA)
+          
+          
+          let statusColor = document.getElementById('status');
+          if (statusColor) {
   
-  
-    });
-
-    onSnapshot(doc(db, "PPEC", props.id), (doc) => {
-      if (doc.id === props.id) {
-        setOnSiteRN(doc.data().onSiteRN)
-        setOnSiteLPN(doc.data().onSiteLPN)
-        setOnSiteCNA(doc.data().onSiteCNA)
-        
-
-        
-        let statusColor = document.getElementById('status');
-        if (statusColor) {
-
-          if (doc.data().complient === false) {
-            setCompliance("Site Non-Compliant");
-            statusColor.classList.remove('bg-green-600');
-            statusColor.classList.add('bg-red-600');
-          } else if (doc.data().complient === true) {
-            setCompliance("Site Compliant");
-            statusColor.classList.remove('bg-red-600');
-            statusColor.classList.add('bg-green-600');
+            if (doc.data().complient === false) {
+              setCompliance("Site Non-Compliant");
+              statusColor.classList.remove('bg-green-600');
+              statusColor.classList.add('bg-red-600');
+            } else if (doc.data().complient === true) {
+              setCompliance("Site Compliant");
+              statusColor.classList.remove('bg-red-600');
+              statusColor.classList.add('bg-green-600');
+            }
           }
         }
-      }
-    });
+      });
+  
+    }
+  
+    ppecData();
+  
 
-  }
+  }, []); 
 
-  ppecData();
+  
 
   async function handleDelete() {
     if (window.confirm("Do you really want to delete this center ?")) {
