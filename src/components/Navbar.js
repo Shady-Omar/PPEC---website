@@ -160,7 +160,7 @@ function Navbar() {
                       className="bg-white p-8 shadow-2xl rounded-md"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <h2 className="text-2xl font-bold mb-6">Notification Prefrence</h2>
+                      <h2 className="text-2xl font-bold mb-6">Notification Preference</h2>
                       <div className="mb-4">
                         <h3 className="text-lg font-semibold mb-2">
                           Notification Channels
