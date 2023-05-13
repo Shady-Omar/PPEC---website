@@ -20,6 +20,7 @@ function LocationPicker() {
   const [address, setAddress] = useState('');
   const [lat, setLat] = useState('');
   const [lng, setLng] = useState('');
+  const [radius, setRadius] = useState(500); // in meters
 
   const handleChange = (event) => {
     setSelectedState(event.target.value);
@@ -46,15 +47,28 @@ function LocationPicker() {
   useEffect(() => {
     const map = new window.google.maps.Map(document.getElementById('map'), {
       center: center,
-      zoom: 10,
+      zoom: 13,
     });
 
     const marker = new window.google.maps.Marker({
       map: map,
     });
 
+    const circle = new window.google.maps.Circle({
+      strokeColor: "#FF0000",
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: "#FF0000",
+      fillOpacity: 0.35,
+      center: center,
+      radius: Number(radius),
+      map: map,
+    });
+
     window.google.maps.event.addListener(map, 'click', (event) => {      
         marker.setPosition(event.latLng);
+        circle.setCenter(event.latLng);
+
 
       Geocode.setApiKey("AIzaSyC52uvc5kD2YvHTPot-yN1HweJ_b3qIGKQ");
       setLat(`${event.latLng.lat()}`)
@@ -108,7 +122,7 @@ function LocationPicker() {
     //     // console.log('Geocode was not successful for the following reason:', status);
     //   }
     // });
-  }, []);
+  }, [radius]);
 
   return (
     <div className="mb-4">
@@ -156,6 +170,21 @@ function LocationPicker() {
                 <p id='err-zip' className='text-left !mt-4 text-sm text-red-600 hidden'>* Zip code is required</p>
                 </div>
               </div>
+              <select
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500 focus:shadow-outline"
+                id="ppec-radius"
+                value={radius}
+                onChange={(event) => setRadius(event.target.value)}
+              >
+                <option value="" disabled>Radius</option>
+                <option value="500">500 meters</option>
+                <option value="750">750 meters</option>
+                <option value="1000">1000 meters</option>
+                <option value="1500">1500 meters</option>
+                <option value="2000">2000 meters</option>
+                <option value="3000">3000 meters</option>
+              </select>
+
               <input id="lat"
                 className=' w-0 h-0'
                 value={lat || ""}
