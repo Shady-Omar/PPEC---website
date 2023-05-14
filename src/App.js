@@ -10,6 +10,9 @@ import RegisterStaff from './Pages/RegisterStaffPage';
 import RegisterSSO from './Pages/RegisterSSOPage';
 import RegisterSSOAdmin from './Pages/RegisterSSOAdminPage';
 import RegisterSSOStaff from './Pages/RegisterSSOStaffPage';
+import RegisterApplePage from './Pages/RegisterApplePage';
+import RegisterAppleAdmin from './Pages/RegisterAppleAdminPage';
+import RegisterAppleStaff from './Pages/RegisterAppleStaffPage';
 import PPECDetails from './Pages/PPECDetails';
 import StaffDetails from './Pages/StaffDetails';
 
@@ -85,6 +88,9 @@ useEffect(() => {
           <Route path='/register-SSO' element={<RegisterSSO/>}/>
           <Route path='/register-SSO/admin' element={<RegisterSSOAdmin/>}/>
           <Route path='/register-SSO/staff' element={<RegisterSSOStaff/>}/>
+          <Route path='/register-apple' element={<RegisterApplePage/>}/>
+          <Route path='/register-apple/admin' element={<RegisterAppleAdmin/>}/>
+          <Route path='/register-apple/staff' element={<RegisterAppleStaff/>}/>
           <Route path={`/:ppecID`} element={<><Navbar/><PPECDetails/></>}/>
           <Route path='/:ppecID/history' element={<><Navbar/><History/></>}/>
           <Route path='/:ppecID/history/:Date' element={<><Navbar/><DateHistory/></>}/>

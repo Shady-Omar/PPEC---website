@@ -124,7 +124,7 @@ function LogForm() {
         // window.location.replace("/");
       } else {
         // docSnap.data() will be undefined in this case
-        navigate("/register-SSO");
+        navigate("/register-apple");
       }
 
 
