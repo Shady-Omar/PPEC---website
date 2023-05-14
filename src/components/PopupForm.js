@@ -40,6 +40,7 @@ function PopupForm() {
     let centerCity = document.getElementById('ppec-city').value;
     let centerState = document.getElementById('state-select').value;
     let centerZip = document.getElementById('ppec-zip').value;
+    let centerRadius = document.getElementById('ppec-radius').value;
     let lat = document.getElementById('lat').value;
     let lng = document.getElementById('lng').value;
     const geoLocation = new GeoPoint(lat, lng);
@@ -64,6 +65,11 @@ function PopupForm() {
       } else {
         document.getElementById("err-state").classList.add("hidden");
       }
+      // if (centerRadius === null || centerRadius === "") {
+      //   document.getElementById("err-state").classList.remove("hidden");
+      // } else {
+      //   document.getElementById("err-state").classList.add("hidden");
+      // }
       if (centerZip === null || centerZip === "" ) {
         document.getElementById("err-zip").classList.remove("hidden");
       } else {
@@ -114,7 +120,7 @@ function PopupForm() {
             onSiteRN: 0,
             onSiteCNA: 0,
             onSiteLPN: 0,
-            radius: 200,
+            radius: centerRadius,
             city: centerCity,
             state: centerState,
             zipCode: centerZip,
@@ -137,7 +143,7 @@ function PopupForm() {
             onSiteRN: 0,
             onSiteCNA: 0,
             onSiteLPN: 0,
-            radius: 200,
+            radius: centerRadius,
             city: centerCity,
             state: centerState,
             zipCode: centerZip,

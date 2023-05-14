@@ -184,7 +184,6 @@ function LocationPicker() {
                 <option value="2000">2000 meters</option>
                 <option value="3000">3000 meters</option>
               </select>
-
               <input id="lat"
                 className=' w-0 h-0'
                 value={lat || ""}
