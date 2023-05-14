@@ -7,10 +7,10 @@ const mapContainerStyle = {
   height: '250px'
 };
 
-const center = {
-  lat: 25.761681,
-  lng: -80.191788
-};
+// const center = {
+//   lat: 25.761681,
+//   lng: -80.191788
+// };
 
 function LocationPicker() {
   const [selected, setSelected] = React.useState(null);
@@ -20,7 +20,11 @@ function LocationPicker() {
   const [address, setAddress] = useState('');
   const [lat, setLat] = useState('');
   const [lng, setLng] = useState('');
-  const [radius, setRadius] = useState(500); // in meters
+  const [radius, setRadius] = useState(''); // in meters
+  const [center, setCenter] = useState({
+    lat: 25.761681,
+    lng: -80.191788
+  });
 
   const handleChange = (event) => {
     setSelectedState(event.target.value);
@@ -60,7 +64,6 @@ function LocationPicker() {
       strokeWeight: 2,
       fillColor: "#FF0000",
       fillOpacity: 0.35,
-      center: center,
       radius: Number(radius),
       map: map,
     });
@@ -68,6 +71,7 @@ function LocationPicker() {
     window.google.maps.event.addListener(map, 'click', (event) => {      
         marker.setPosition(event.latLng);
         circle.setCenter(event.latLng);
+        setCenter(event.latLng);
 
 
       Geocode.setApiKey("AIzaSyC52uvc5kD2YvHTPot-yN1HweJ_b3qIGKQ");
