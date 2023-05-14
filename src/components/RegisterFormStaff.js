@@ -141,7 +141,7 @@ function RegFormStaff() {
         setStaffNum("");
         setStaffJob("");
         
-        navigate("/");
+        window.location.href('/');
       }
 
   };

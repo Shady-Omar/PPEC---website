@@ -122,7 +122,7 @@ function RegFormAdminApple() {
                 setAdminNum("");
                 setAdminJob("");
           
-                navigate("/");
+                window.location.href('/');
               } catch (e) {
                 console.error("Error adding document: ", e);
               }

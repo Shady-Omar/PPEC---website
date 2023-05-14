@@ -120,7 +120,7 @@ function RegFormStaffApple() {
                 setStaffNum("");
                 setStaffJob("");
           
-                navigate("/");
+                window.location.href('/');
               } catch (e) {
                 console.error("Error adding document: ", e);
               }
