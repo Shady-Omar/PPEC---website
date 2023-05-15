@@ -143,7 +143,7 @@ function PopupForm() {
             onSiteRN: 0,
             onSiteCNA: 0,
             onSiteLPN: 0,
-            radius: centerRadius === "" ? "500" :centerRadius,
+            radius: centerRadius,
             city: centerCity,
             state: centerState,
             zipCode: centerZip,

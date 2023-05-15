@@ -181,7 +181,6 @@ function LocationPicker() {
                 value={radius}
                 onChange={(event) => setRadius(event.target.value)}
               >
-                <option value="" disabled>Radius</option>
                 <option value="500">500 meters</option>
                 <option value="750">750 meters</option>
                 <option value="1000">1000 meters</option>
