@@ -64,7 +64,7 @@ function LocationPicker() {
       strokeWeight: 2,
       fillColor: "#FF0000",
       fillOpacity: 0.35,
-      radius: Number(radius),
+      radius: 500,
       map: map,
     });
 
@@ -72,6 +72,7 @@ function LocationPicker() {
         marker.setPosition(event.latLng);
         circle.setCenter(event.latLng);
         setCenter(event.latLng);
+        setRadius(radius);
 
 
       Geocode.setApiKey("AIzaSyC52uvc5kD2YvHTPot-yN1HweJ_b3qIGKQ");
