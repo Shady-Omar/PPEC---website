@@ -114,7 +114,7 @@ function RegFormAdmin() {
               await setDoc(doc(db, "users", user.uid), {
                 firstname: adminFirst,
                 lastname: adminLast,
-                email: adminEmail,
+                email: adminEmail.toLowerCase(),
                 phoneNum: `${Number(adminNum)}`,
                 jobTitle: adminJob,
                 isAdmin: true,

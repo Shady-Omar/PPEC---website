@@ -58,7 +58,7 @@ function RegFormAdminSSO() {
             await setDoc(doc(db, "users", user.uid), {
               firstname: user.displayName,
               lastname: "",
-              email: user.email,
+              email: user.email.toLowerCase(),
               phoneNum: `${Number(adminNum)}`,
               jobTitle: adminJob,
               isAdmin: true,

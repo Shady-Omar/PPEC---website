@@ -75,10 +75,7 @@ function Details(props) {
           setState(doc.data().state)
           setZip(doc.data().zipCode)
           setComplianceState(doc.data().complient)
-          
-          console.log(geoLocation);
           setClients(doc.data().clients);
-          
           setRequiredRN(Math.ceil(clients / 5)) ;
           setRequiredLPN(clients > 2 ? Math.ceil((clients - 2)/3) : 0)
           setRequiredCNA(Math.ceil(clients / 2));

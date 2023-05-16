@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { db } from "../firebase.js";
-import { collection, query, where, getDocs, setDoc, updateDoc, increment, arrayUnion, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, setDoc, updateDoc, increment, arrayUnion, doc, limit } from 'firebase/firestore';
 
 function StaffForm(props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,17 +30,25 @@ function StaffForm(props) {
     e.preventDefault();
 
     const results = [];
-    const querySnapshot = await getDocs(collection(db, "users"));
+    
+    const q = query(
+        collection(db, "users"),
+        where("email", "==", searchQuery.toLowerCase()),
+        where("isAdmin", "==", false),
+        limit(1)
+      );
+    const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
-      
-      if (doc.data().email.toLowerCase() === searchQuery.toLowerCase()) {
-          if (doc.data().isAdmin === false) {
-            results.push(doc.data());
-          }
-      }
-    
+      results.push(doc.data());
+
     });
+
+    // const querySnapshot = await getDocs(collection(db, "users"));
+    // querySnapshot.forEach((doc) => {
+    //   // doc.data() is never undefined for query doc snapshots
+    
+    // });
     
     if (results.length === 0) {
       document.getElementById('err-search').classList.remove('hidden');
