@@ -62,21 +62,21 @@ function Details(props) {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setCenterName(doc.data().centerName);
-        setCenterAddress(doc.data().centerAdressName);
-        setRN(doc.data().RN);
-        setLPN(doc.data().LPN);
-        setCNA(doc.data().CNA);
-        setAdminID(doc.data().admin);
-        setOpenTime(doc.data().openTime);
-        setCloseTime(doc.data().closeTime);
-        setOpDays(doc.data().opertionalDays)
-        setGeoLocation(doc.data().location)
-        setCity(doc.data().city)
-        setState(doc.data().state)
-        setZip(doc.data().zipCode)
-        setComplianceState(doc.data().complient)
-        setClients(doc.data().clients);
+        setCenterName(docSnap.data().centerName);
+        setCenterAddress(docSnap.data().centerAdressName);
+        setRN(docSnap.data().RN);
+        setLPN(docSnap.data().LPN);
+        setCNA(docSnap.data().CNA);
+        setAdminID(docSnap.data().admin);
+        setOpenTime(docSnap.data().openTime);
+        setCloseTime(docSnap.data().closeTime);
+        setOpDays(docSnap.data().opertionalDays)
+        setGeoLocation(docSnap.data().location)
+        setCity(docSnap.data().city)
+        setState(docSnap.data().state)
+        setZip(docSnap.data().zipCode)
+        setComplianceState(docSnap.data().complient)
+        setClients(docSnap.data().clients);
         setRequiredRN(Math.ceil(clients / 5)) ;
         setRequiredLPN(clients > 2 ? Math.ceil((clients - 2)/3) : 0)
         setRequiredCNA(Math.ceil(clients / 2));
