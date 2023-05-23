@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from "../firebase.js";
-import { doc, getDocs, getDoc, collection, updateDoc, onSnapshot, setDoc, arrayUnion, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, onSnapshot, setDoc, arrayUnion, deleteDoc } from "firebase/firestore";
 import StaffForm from './StaffForm.js';
 import { Link } from 'react-router-dom'
 
