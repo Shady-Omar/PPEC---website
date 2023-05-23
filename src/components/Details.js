@@ -57,33 +57,33 @@ function Details(props) {
   
     async function ppecData() {
     
-      const querySnapshot = await getDocs(collection(db, "PPEC"));
-      querySnapshot.forEach(async(doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        if (doc.id === props.id) {
-          setCenterName(doc.data().centerName);
-          setCenterAddress(doc.data().centerAdressName);
-          setRN(doc.data().RN);
-          setLPN(doc.data().LPN);
-          setCNA(doc.data().CNA);
-          setAdminID(doc.data().admin);
-          setOpenTime(doc.data().openTime);
-          setCloseTime(doc.data().closeTime);
-          setOpDays(doc.data().opertionalDays)
-          setGeoLocation(doc.data().location)
-          setCity(doc.data().city)
-          setState(doc.data().state)
-          setZip(doc.data().zipCode)
-          setComplianceState(doc.data().complient)
-          setClients(doc.data().clients);
-          setRequiredRN(Math.ceil(clients / 5)) ;
-          setRequiredLPN(clients > 2 ? Math.ceil((clients - 2)/3) : 0)
-          setRequiredCNA(Math.ceil(clients / 2));
-          
-        }
-    
-    
-      });
+
+      const docRef = doc(db, "PPEC", props.id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setCenterName(doc.data().centerName);
+        setCenterAddress(doc.data().centerAdressName);
+        setRN(doc.data().RN);
+        setLPN(doc.data().LPN);
+        setCNA(doc.data().CNA);
+        setAdminID(doc.data().admin);
+        setOpenTime(doc.data().openTime);
+        setCloseTime(doc.data().closeTime);
+        setOpDays(doc.data().opertionalDays)
+        setGeoLocation(doc.data().location)
+        setCity(doc.data().city)
+        setState(doc.data().state)
+        setZip(doc.data().zipCode)
+        setComplianceState(doc.data().complient)
+        setClients(doc.data().clients);
+        setRequiredRN(Math.ceil(clients / 5)) ;
+        setRequiredLPN(clients > 2 ? Math.ceil((clients - 2)/3) : 0)
+        setRequiredCNA(Math.ceil(clients / 2));
+      } else {
+        // docSnap.data() will be undefined in this case
+        console.log("No such document!");
+      }
       
       onSnapshot(doc(db, "PPEC", props.id), (doc) => {
         if (doc.id === props.id) {
@@ -134,7 +134,7 @@ function Details(props) {
       const PPECRef = doc(db, "PPEC", props.id);
 
     await updateDoc(PPECRef, {
-      clients: clientsChange,
+      clients: Number(clientsChange),
     });
 
     const docRef = doc(db, "PPEC", props.id, "history", getTodayDateRepresentation());
@@ -143,8 +143,6 @@ function Details(props) {
     if (docSnap.exists()) {
       onSnapshot(doc(db, "PPEC", props.id),async (docx) => {
         if (docx.id === props.id) {
-  
-  
           setClients(docx.data().clients);
   
           setRequiredRN(Math.ceil(clientsChange / 5)) ;
@@ -155,9 +153,6 @@ function Details(props) {
           await updateDoc(HistoryRef, {
             ClientsChanges: arrayUnion(`${getCurrentTime()} ${clientsChange} clients present, ${Math.ceil(clientsChange / 5)} RN needed, ${Math.ceil(clientsChange / 2)} CNA needed, ${clientsChange > 2 ? Math.ceil((clientsChange - 2)/3) : 0} LPN needed`),
           });
-          console.log(requiredRN);
-          console.log(requiredLPN);
-          console.log(requiredCNA);
         }
       });
     } else {
