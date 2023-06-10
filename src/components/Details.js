@@ -76,7 +76,6 @@ function Details(props) {
         setState(docSnap.data().state)
         setZip(docSnap.data().zipCode)
         setComplianceState(docSnap.data().complient)
-        setClients(docSnap.data().clients);
         setRequiredRN(Math.ceil(clients / 5)) ;
         setRequiredLPN(clients > 2 ? Math.ceil((clients - 2)/3) : 0)
         setRequiredCNA(Math.ceil(clients / 2));
@@ -90,7 +89,7 @@ function Details(props) {
           setOnSiteRN(doc.data().onSiteRN)
           setOnSiteLPN(doc.data().onSiteLPN)
           setOnSiteCNA(doc.data().onSiteCNA)
-          
+          setClients(doc.data().clients);
           
           let statusColor = document.getElementById('status');
           if (statusColor) {
@@ -113,7 +112,9 @@ function Details(props) {
     ppecData();
   
 
-  }, []); 
+  }, [clients]); 
+
+
 
   
 
@@ -133,59 +134,60 @@ function Details(props) {
       document.getElementById("err-change").classList.add("hidden");
       const PPECRef = doc(db, "PPEC", props.id);
 
-    await updateDoc(PPECRef, {
-      clients: Number(clientsChange),
-    });
-
-    const docRef = doc(db, "PPEC", props.id, "history", getTodayDateRepresentation());
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      onSnapshot(doc(db, "PPEC", props.id),async (docx) => {
-        if (docx.id === props.id) {
-          setClients(docx.data().clients);
-  
-          setRequiredRN(Math.ceil(clientsChange / 5)) ;
-          setRequiredLPN(clientsChange > 2 ? Math.ceil((clientsChange - 2)/3) : 0)
-          setRequiredCNA(Math.ceil(clientsChange / 2));
-  
-          const HistoryRef = doc(db, "PPEC", props.id, "history", getTodayDateRepresentation());
-          await updateDoc(HistoryRef, {
-            ClientsChanges: arrayUnion(`${getCurrentTime()} ${clientsChange} clients present, ${Math.ceil(clientsChange / 5)} RN needed, ${Math.ceil(clientsChange / 2)} CNA needed, ${clientsChange > 2 ? Math.ceil((clientsChange - 2)/3) : 0} LPN needed`),
-          });
-        }
+      await updateDoc(PPECRef, {
+        clients: Number(clientsChange),
       });
-    } else {
       
-      await setDoc(doc(db, "PPEC", props.id, "history", getTodayDateRepresentation()), {
-        CNA: CNA,
-        LPN: LPN,
-        RN: RN,
-        admin: adminID,
-        centerName: centerName,
-        centerAdressName: centerAddress,
-        clients: clientsChange,
-        closeTime: closeTime,
-        openTime: openTime,
-        opertionalDays: opDays,
-        complient: complianceState,
-        country: "United States",
-        location: geoLocation,
-        onSiteRN: onSiteRN || 0,
-        onSiteCNA: onSiteCNA || 0,
-        onSiteLPN: onSiteLPN || 0,
-        radius: 200,
-        city: city,
-        state: state,
-        zipCode: zip,
-        ClientsChanges: arrayUnion(`${getCurrentTime()} ${clientsChange} clients present, ${Math.ceil(clientsChange / 5)} RN needed, ${Math.ceil(clientsChange / 2)} CNA needed, ${clientsChange > 2 ? Math.ceil((clientsChange - 2)/3) : 0} LPN needed`),
-        ComplianceUpdate: [],
-        staffTracking: [],
-      });
+      setRequiredRN(Math.ceil(clientsChange / 5));
+      setRequiredLPN(clientsChange > 2 ? Math.ceil((clientsChange - 2)/3) : 0)
+      setRequiredCNA(Math.ceil(clientsChange / 2));
 
-    }
+      const docRef = doc(db, "PPEC", props.id, "history", getTodayDateRepresentation());
+      const docSnap = await getDoc(docRef);
 
-    setClientsChange("")
+      if (docSnap.exists()) {
+        onSnapshot(doc(db, "PPEC", props.id),async (docx) => {
+          if (docx.id === props.id) {
+            setClients(docx.data().clients);
+    
+    
+            const HistoryRef = doc(db, "PPEC", props.id, "history", getTodayDateRepresentation());
+            await updateDoc(HistoryRef, {
+              ClientsChanges: arrayUnion(`${getCurrentTime()} ${clientsChange} clients present, ${Math.ceil(clientsChange / 5)} RN needed, ${Math.ceil(clientsChange / 2)} CNA needed, ${clientsChange > 2 ? Math.ceil((clientsChange - 2)/3) : 0} LPN needed`),
+            });
+          }
+        });
+      } else {
+        
+        await setDoc(doc(db, "PPEC", props.id, "history", getTodayDateRepresentation()), {
+          CNA: CNA,
+          LPN: LPN,
+          RN: RN,
+          admin: adminID,
+          centerName: centerName,
+          centerAdressName: centerAddress,
+          clients: clientsChange,
+          closeTime: closeTime,
+          openTime: openTime,
+          opertionalDays: opDays,
+          complient: complianceState,
+          country: "United States",
+          location: geoLocation,
+          onSiteRN: onSiteRN || 0,
+          onSiteCNA: onSiteCNA || 0,
+          onSiteLPN: onSiteLPN || 0,
+          radius: 200,
+          city: city,
+          state: state,
+          zipCode: zip,
+          ClientsChanges: arrayUnion(`${getCurrentTime()} ${clientsChange} clients present, ${Math.ceil(clientsChange / 5)} RN needed, ${Math.ceil(clientsChange / 2)} CNA needed, ${clientsChange > 2 ? Math.ceil((clientsChange - 2)/3) : 0} LPN needed`),
+          ComplianceUpdate: [],
+          staffTracking: [],
+        });
+
+      }
+
+      setClientsChange("")
     }
     
 
@@ -223,15 +225,15 @@ function Details(props) {
       </div>
       <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 m-9">
         <div className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredRN || 0}</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredRN}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">RN(s) Required</p>
         </div>
         <div className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredLPN || 0}</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredLPN}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">LPN(s) Required</p>
         </div>
         <div className="bg-gray-200 max-h-[164px] rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-between mb-4">
-          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredCNA || 0}</h4>
+          <h4 className=" text-4xl font-bold text-gray-800 my-4">{requiredCNA}</h4>
           <p className="mt-2 text-md font-semibold text-gray-600 mb-8">CNA(s) Required</p>
         </div>
 
