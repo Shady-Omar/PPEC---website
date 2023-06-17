@@ -54,7 +54,79 @@ function Details(props) {
 
 
   useEffect(() => {
+
+    function getRnRequired(clients) {
+      const sequence = [];
+      for (let i = 1; i <= clients; i++) {
+        for (let j = 0; j < 4; j++) {
+          sequence.push(i);
+        }
+      }
+      return sequence[clients - 1];
+    }
+    setRequiredRN(getRnRequired(clients))
   
+    function getRnOrLPN(clients) {
+      const sequence = [0, 0];
+      for (let i = 1; i <= clients; i++) {
+        for (let j = 0; j < 4; j++) {
+          sequence.push(i);
+        }
+      }
+      return sequence[clients - 1];
+    }
+
+    setRequiredLPN(getRnOrLPN(clients))
+    
+    function getRnOrLPNOrCNA(clients) {
+      const sequence = [0];
+      for (let i = 1; i <= clients; i++) {
+        for (let j = 0; j < 2; j++) {
+          sequence.push(i);
+        }
+      }
+      return sequence[clients - 1];
+    }
+
+    setRequiredCNA(getRnOrLPNOrCNA(clients))
+
+    function getCompliance({
+      onsiteRN,
+      requiredRN,
+      onsiteLPN,
+      requiredLPN,
+      onsiteCNA,
+      requiredCNA,
+    }) {
+      let min1 = Math.min(onsiteRN, requiredRN); 
+      onsiteRN -= min1; 
+      requiredRN -= min1;
+    
+      let min2 = Math.min(onsiteRN, requiredLPN);
+      onsiteRN -= min2;
+      requiredLPN -= min2;
+    
+      let min3 = Math.min(onsiteRN, requiredCNA);
+      onsiteRN -= min3;
+      requiredCNA -= min3;
+    
+      let min4 = Math.min(onsiteLPN, requiredLPN);
+      onsiteLPN -= min4;
+      requiredLPN -= min4;
+    
+      let min5 = Math.min(onsiteLPN, requiredCNA);
+      onsiteLPN -= min5;
+      requiredCNA -= min5;
+    
+      let min6 = Math.min(onsiteCNA, requiredCNA);
+      onsiteCNA -= min6;
+      requiredCNA -= min6;
+    
+      let sumRequired = requiredRN + requiredCNA + requiredLPN;
+    
+      return sumRequired === 0;
+    }
+
     async function ppecData() {
     
 
@@ -75,10 +147,7 @@ function Details(props) {
         setCity(docSnap.data().city)
         setState(docSnap.data().state)
         setZip(docSnap.data().zipCode)
-        setComplianceState(docSnap.data().complient)
-        setRequiredRN(Math.ceil(clients / 5)) ;
-        setRequiredLPN(clients > 2 ? Math.ceil((clients - 2)/3) : 0)
-        setRequiredCNA(Math.ceil(clients / 2));
+        setComplianceState(getCompliance(onSiteRN, requiredRN, onSiteLPN, requiredLPN, onSiteCNA, requiredCNA))
       } else {
         // docSnap.data() will be undefined in this case
         console.log("No such document!");
@@ -133,14 +202,10 @@ function Details(props) {
     } else {
       document.getElementById("err-change").classList.add("hidden");
       const PPECRef = doc(db, "PPEC", props.id);
-
       await updateDoc(PPECRef, {
         clients: Number(clientsChange),
+        complient: complianceState,
       });
-      
-      setRequiredRN(Math.ceil(clientsChange / 5));
-      setRequiredLPN(clientsChange > 2 ? Math.ceil((clientsChange - 2)/3) : 0)
-      setRequiredCNA(Math.ceil(clientsChange / 2));
 
       const docRef = doc(db, "PPEC", props.id, "history", getTodayDateRepresentation());
       const docSnap = await getDoc(docRef);

@@ -64,7 +64,7 @@ function LocationPicker() {
       strokeWeight: 2,
       fillColor: "#FF0000",
       fillOpacity: 0.35,
-      radius: 500,
+      radius: parseInt(radius),
       map: map,
     });
 
@@ -181,12 +181,11 @@ function LocationPicker() {
                 value={radius}
                 onChange={(event) => setRadius(event.target.value)}
               >
-                <option value="500">500 meters</option>
-                <option value="750">750 meters</option>
-                <option value="1000">1000 meters</option>
-                <option value="1500">1500 meters</option>
-                <option value="2000">2000 meters</option>
-                <option value="3000">3000 meters</option>
+                <option value="200">200 meters</option>
+                <option value="250">250 meters</option>
+                <option value="300">300 meters</option>
+                <option value="350">350 meters</option>
+                <option value="400">400 meters</option>
               </select>
               <input id="lat"
                 className=' w-0 h-0'
