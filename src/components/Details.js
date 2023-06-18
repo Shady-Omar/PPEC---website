@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from "../firebase.js";
-import { doc, getDoc, updateDoc, onSnapshot, setDoc, arrayUnion, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, onSnapshot, setDoc, arrayUnion, deleteDoc, arrayRemove } from "firebase/firestore";
 import StaffForm from './StaffForm.js';
 import { Link } from 'react-router-dom'
 
@@ -29,6 +29,7 @@ function Details(props) {
   const [requiredRN, setRequiredRN] = useState("");
   const [requiredLPN, setRequiredLPN] = useState("");
   const [requiredCNA, setRequiredCNA] = useState("");
+  
   
   
   function getTodayDateRepresentation() {
@@ -189,6 +190,9 @@ function Details(props) {
 
   async function handleDelete() {
     if (window.confirm("Do you really want to delete this center ?")) {
+      await updateDoc(doc(db, "users", adminID), {
+        PPEC: arrayRemove(props.id)
+      })
       await deleteDoc(doc(db, "PPEC", props.id)).then()
       window.location.replace("/")
     }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import LocationPicker from './LocationPicker';
 import { db } from "../firebase.js";
-import { collection, addDoc, GeoPoint, setDoc, doc } from "firebase/firestore";
+import { collection, addDoc, GeoPoint, setDoc, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import TimePicker from "rc-time-picker";
 import 'rc-time-picker/assets/index.css';
@@ -124,6 +124,10 @@ function PopupForm() {
             city: centerCity,
             state: centerState,
             zipCode: centerZip,
+          });
+
+          await updateDoc(doc(db, "users", uid), {
+            PPEC: arrayUnion(ppecRef.id)
           });
 
           await setDoc(doc(db, "PPEC", ppecRef.id, "history", getTodayDateRepresentation()), {
