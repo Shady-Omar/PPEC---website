@@ -53,37 +53,74 @@ function Details(props) {
     return timeString;
   }
 
+  function getCompliance(
+    onsiteRN,
+    requiredRN,
+    onsiteLPN,
+    requiredLPN,
+    onsiteCNA,
+    requiredCNA
+  ) {
+    let min1 = Math.min(onsiteRN, requiredRN);
+    onsiteRN -= min1;
+    requiredRN -= min1;
 
+    let min2 = Math.min(onsiteRN, requiredLPN);
+    onsiteRN -= min2;
+    requiredLPN -= min2;
+
+    let min3 = Math.min(onsiteRN, requiredCNA);
+    onsiteRN -= min3;
+    requiredCNA -= min3;
+
+    let min4 = Math.min(onsiteLPN, requiredLPN);
+    onsiteLPN -= min4;
+    requiredLPN -= min4;
+
+    let min5 = Math.min(onsiteLPN, requiredCNA);
+    onsiteLPN -= min5;
+    requiredCNA -= min5;
+
+    let min6 = Math.min(onsiteCNA, requiredCNA);
+    onsiteCNA -= min6;
+    requiredCNA -= min6;
+
+    let sumRequired = requiredRN + requiredCNA + requiredLPN;
+
+    return sumRequired === 0;
+  }
+
+
+  function getRnRequired(clients) {
+    const sequence = [];
+    for (let i = 1; i <= clients; i++) {
+      for (let j = 0; j < 4; j++) {
+        sequence.push(i);
+      }
+    }
+    return sequence[clients - 1];
+  }
+
+  function getRnOrLPN(clients) {
+    const sequence = [0, 0];
+    for (let i = 1; i <= clients; i++) {
+      for (let j = 0; j < 4; j++) {
+        sequence.push(i);
+      }
+    }
+    return sequence[clients - 1];
+  }
+
+  function getRnOrLPNOrCNA(clients) {
+    const sequence = [0];
+    for (let i = 1; i <= clients; i++) {
+      for (let j = 0; j < 2; j++) {
+        sequence.push(i);
+      }
+    }
+    return sequence[clients - 1];
+  }
   useEffect(() => {
-    function getRnRequired(clients) {
-      const sequence = [];
-      for (let i = 1; i <= clients; i++) {
-        for (let j = 0; j < 4; j++) {
-          sequence.push(i);
-        }
-      }
-      return sequence[clients - 1];
-    }
-  
-    function getRnOrLPN(clients) {
-      const sequence = [0, 0];
-      for (let i = 1; i <= clients; i++) {
-        for (let j = 0; j < 4; j++) {
-          sequence.push(i);
-        }
-      }
-      return sequence[clients - 1];
-    }
-  
-    function getRnOrLPNOrCNA(clients) {
-      const sequence = [0];
-      for (let i = 1; i <= clients; i++) {
-        for (let j = 0; j < 2; j++) {
-          sequence.push(i);
-        }
-      }
-      return sequence[clients - 1];
-    }
   
     async function ppecData() {
       const docRef = doc(db, "PPEC", props.id);
@@ -112,53 +149,20 @@ function Details(props) {
           setOnSiteRN(doc.data().onSiteRN || 0);
           setOnSiteLPN(doc.data().onSiteLPN || 0);
           setOnSiteCNA(doc.data().onSiteCNA || 0);
-          setClients(doc.data().clients);
+          setClients(doc.data().clients || 0);
         }
       });
+      
   
       return unsubscribe;
     }
   
-    function getCompliance(
-      onsiteRN,
-      requiredRN,
-      onsiteLPN,
-      requiredLPN,
-      onsiteCNA,
-      requiredCNA
-    ) {
-      let min1 = Math.min(onsiteRN, requiredRN);
-      onsiteRN -= min1;
-      requiredRN -= min1;
-  
-      let min2 = Math.min(onsiteRN, requiredLPN);
-      onsiteRN -= min2;
-      requiredLPN -= min2;
-  
-      let min3 = Math.min(onsiteRN, requiredCNA);
-      onsiteRN -= min3;
-      requiredCNA -= min3;
-  
-      let min4 = Math.min(onsiteLPN, requiredLPN);
-      onsiteLPN -= min4;
-      requiredLPN -= min4;
-  
-      let min5 = Math.min(onsiteLPN, requiredCNA);
-      onsiteLPN -= min5;
-      requiredCNA -= min5;
-  
-      let min6 = Math.min(onsiteCNA, requiredCNA);
-      onsiteCNA -= min6;
-      requiredCNA -= min6;
-  
-      let sumRequired = requiredRN + requiredCNA + requiredLPN;
-  
-      return sumRequired === 0;
-    }
-  
+   
+    
     ppecData().then((unsubscribe) => {
       let statusColor = document.getElementById("status");
       if (statusColor) {
+      
         let complianceState = getCompliance(
           onSiteRN,
           getRnRequired(clients),
@@ -168,7 +172,11 @@ function Details(props) {
           getRnOrLPNOrCNA(clients)
         );
   
-        if (complianceState === false) {
+        if (clients === 0) {
+          setCompliance("Site Compliant");
+          statusColor.classList.remove("bg-red-600");
+          statusColor.classList.add("bg-green-600");
+        } else if (complianceState === false) {
           setCompliance("Site Non-Compliant");
           statusColor.classList.remove("bg-green-600");
           statusColor.classList.add("bg-red-600");
@@ -177,11 +185,13 @@ function Details(props) {
           statusColor.classList.remove("bg-red-600");
           statusColor.classList.add("bg-green-600");
         }
+
+        
       }
 
-      setRequiredRN(getRnRequired(clients))
-      setRequiredLPN(getRnOrLPN(clients))
-      setRequiredCNA(getRnOrLPNOrCNA(clients))
+      setRequiredRN(getRnRequired(clients) || 0)
+      setRequiredLPN(getRnOrLPN(clients) || 0)
+      setRequiredCNA(getRnOrLPNOrCNA(clients) || 0)
   
       setComplianceState(() =>
         getCompliance(
@@ -197,7 +207,7 @@ function Details(props) {
       
       return unsubscribe;
     });
-  }, [clients]);
+  }, [clients, onSiteRN, onSiteLPN, onSiteCNA]);
   
 
   async function handleDelete() {
@@ -213,6 +223,8 @@ function Details(props) {
   async function handleSubmit(event) {
     event.preventDefault();
 
+    
+
     if (clientsChange === "") {
       document.getElementById("err-change").classList.remove("hidden");
     } else {
@@ -221,7 +233,14 @@ function Details(props) {
       try {
         await updateDoc(PPECRef, {
           clients: Number(clientsChange),
-          complient: complianceState,
+          complient: getCompliance(
+            onSiteRN,
+            getRnRequired(clientsChange),
+            onSiteLPN,
+            getRnOrLPN(clientsChange),
+            onSiteCNA,
+            getRnOrLPNOrCNA(clientsChange)
+          ),
         });
       } catch (error) {
         console.log(error);
@@ -238,16 +257,45 @@ function Details(props) {
     
             const HistoryRef = doc(db, "PPEC", props.id, "history", getTodayDateRepresentation());
             await updateDoc(HistoryRef, {
+              CNA: getRnOrLPNOrCNA(clientsChange),
+              LPN:  getRnOrLPN(clientsChange),
+              RN: getRnRequired(clientsChange),
+              admin: adminID,
+              centerName: centerName,
+              centerAdressName: centerAddress,
+              clients: clientsChange,
+              closeTime: closeTime,
+              openTime: openTime,
+              opertionalDays: opDays,
+              complient: getCompliance(
+                onSiteRN,
+                getRnRequired(clientsChange),
+                onSiteLPN,
+                getRnOrLPN(clientsChange),
+                onSiteCNA,
+                getRnOrLPNOrCNA(clientsChange)
+              ),
+              country: "United States",
+              location: geoLocation,
+              onSiteRN: onSiteRN || 0,
+              onSiteCNA: onSiteCNA || 0,
+              onSiteLPN: onSiteLPN || 0,
+              radius: 200,
+              city: city,
+              state: state,
+              zipCode: zip,
               ClientsChanges: arrayUnion(`${getCurrentTime()} ${clientsChange} clients present, ${Math.ceil(clientsChange / 5)} RN needed, ${Math.ceil(clientsChange / 2)} CNA needed, ${clientsChange > 2 ? Math.ceil((clientsChange - 2)/3) : 0} LPN needed`),
+              ComplianceUpdate: [],
+              staffTracking: [],
             });
           }
         });
       } else {
         
         await setDoc(doc(db, "PPEC", props.id, "history", getTodayDateRepresentation()), {
-          CNA: CNA,
-          LPN: LPN,
-          RN: RN,
+          CNA: getRnOrLPNOrCNA(clientsChange),
+          LPN:  getRnOrLPN(clientsChange),
+          RN: getRnRequired(clientsChange),
           admin: adminID,
           centerName: centerName,
           centerAdressName: centerAddress,
@@ -255,7 +303,14 @@ function Details(props) {
           closeTime: closeTime,
           openTime: openTime,
           opertionalDays: opDays,
-          complient: complianceState,
+          complient: getCompliance(
+            onSiteRN,
+            getRnRequired(clientsChange),
+            onSiteLPN,
+            getRnOrLPN(clientsChange),
+            onSiteCNA,
+            getRnOrLPNOrCNA(clientsChange)
+          ),
           country: "United States",
           location: geoLocation,
           onSiteRN: onSiteRN || 0,

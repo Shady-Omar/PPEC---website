@@ -141,7 +141,7 @@ function RegFormAdmin() {
           setAdminNum("");
           setAdminJob("");
     
-          window.location.href('/');
+          window.location.href = '/';
         }
   };
 

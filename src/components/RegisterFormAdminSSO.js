@@ -71,7 +71,7 @@ function RegFormAdminSSO() {
             setAdminNum("");
             setAdminJob("");
             
-            window.location.href('/');
+           window.location.href = '/';
           } catch (e) {
             console.error("Error adding document: ", e);
           }

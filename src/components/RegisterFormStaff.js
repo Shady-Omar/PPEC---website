@@ -98,50 +98,50 @@ function RegFormStaff() {
       } else {
         
         createUserWithEmailAndPassword(auth, staffEmail, staffPass)
-        .then(async(userCredential) => {
-          // Signed in 
-          const user = userCredential.user;
-          // ...
-          try {
+  .then(async (userCredential) => {
+    // Signed in
+    const user = userCredential.user;
+    try {
+      // Upload file to Firebase Storage
+      const storage = getStorage();
+      const storageRef = ref(storage, `images/${staffEmail}/${selectedPhoto.name}`);
+      await uploadBytes(storageRef, selectedPhoto);
 
-            // Upload file to Firebase Storage
-            const storage = getStorage();
-            const storageRef = ref(storage, `images/${staffEmail}/${selectedPhoto.name}`);
-            await uploadBytes(storageRef, selectedPhoto);
-            
-            // Get download URL of file
-            const downloadUrl = await getDownloadURL(storageRef);
-            setPhotoUrl(downloadUrl);
+      // Get download URL of file
+      const downloadUrl = await getDownloadURL(storageRef);
+      setPhotoUrl(downloadUrl);
 
-            await setDoc(doc(db, "users", user.uid), {
-              firstname: staffFirst,
-              lastname: staffLast,
-              email: staffEmail.toLowerCase(),
-              phoneNum: `${Number(staffNum)}`,
-              jobTitle: staffJob,
-              isAdmin: false,
-              photoUrl: downloadUrl,
-              uid: user.uid,
-              PPEC: [],
-            });
-          } catch (e) {
-            console.error("Error adding document: ", e);
-          }
-        })
-        .catch((error) => {
-          // const errorCode = error.code;
-          // const errorMessage = error.message;
-          // ..
-        });
+      console.log('test');
+      await setDoc(doc(db, "users", user.uid), {
+        firstname: staffFirst,
+        lastname: staffLast,
+        email: staffEmail.toLowerCase(),
+        phoneNum: `${Number(staffNum)}`,
+        jobTitle: staffJob,
+        isAdmin: false,
+        photoUrl: downloadUrl,
+        uid: user.uid,
+        PPEC: [],
+      });
 
-        setStaffFirst("");
-        setStaffLast("");
-        setStaffEmail("");
-        setStaffPass("");
-        setStaffNum("");
-        setStaffJob("");
-        
-        window.location.href('/');
+      // Clear form inputs
+      setStaffFirst("");
+      setStaffLast("");
+      setStaffEmail("");
+      setStaffPass("");
+      setStaffNum("");
+      setStaffJob("");
+
+      // Redirect to homepage
+      window.location.href = '/';
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  })
+  .catch((error) => {
+    console.error("Error creating user: ", error);
+  });
+
       }
 
   };
