@@ -91,17 +91,30 @@ function Details(props) {
   }
 
 
-  function getRnRequired(clients) {
+  function getActualClients(children) {
+    if (children === 1) return 1;
+    if (children === 2 || children === 3) return 2;
+    while (children % 3 !== 0) {
+      children++;
+    }
+    return Math.floor(children / 3);
+  }
+
+  function getRnRequired(children) {
+    let clients = getActualClients(children)
+    if (clients === 0) return 0;
     const sequence = [];
     for (let i = 1; i <= clients; i++) {
       for (let j = 0; j < 4; j++) {
         sequence.push(i);
       }
     }
-    return sequence[clients - 1];
+    return Math.min(sequence[clients - 1], 4);
   }
 
-  function getRnOrLPN(clients) {
+  function getRnOrLPN(children) {
+    let clients = getActualClients(children)
+    if (clients === 0) return 0;
     const sequence = [0, 0];
     for (let i = 1; i <= clients; i++) {
       for (let j = 0; j < 4; j++) {
@@ -111,7 +124,9 @@ function Details(props) {
     return sequence[clients - 1];
   }
 
-  function getRnOrLPNOrCNA(clients) {
+  function getRnOrLPNOrCNA(children) {
+    let clients = getActualClients(children)
+    if (clients === 0) return 0;
     const sequence = [0];
     for (let i = 1; i <= clients; i++) {
       for (let j = 0; j < 2; j++) {
