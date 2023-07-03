@@ -112,16 +112,38 @@ function Details(props) {
     return Math.min(sequence[clients - 1], 4);
   }
 
-  function getRnOrLPN(children) {
-    let clients = getActualClients(children)
-    if (clients === 0) return 0;
-    const sequence = [0, 0];
-    for (let i = 1; i <= clients; i++) {
-      for (let j = 0; j < 4; j++) {
-        sequence.push(i);
-      }
+  function getRnOrLPN(clients) {
+    if (clients <= 6) {
+      return 0;
     }
-    return sequence[clients - 1];
+  
+    const sequence = [0, 0, 0, 0, 0, 0];
+    let count = 1;
+    let sixSwitch = false;
+    let numOfDuplicates = 0;
+  
+    while (sequence.length < clients) {
+      if (count === 4) {
+        sixSwitch = true;
+      }
+  
+      if (sixSwitch && numOfDuplicates === 6) {
+        count++;
+        numOfDuplicates = 0;
+        continue;
+      }
+  
+      if (!sixSwitch && numOfDuplicates === 12) {
+        count++;
+        numOfDuplicates = 0;
+        continue;
+      }
+  
+      sequence.push(count);
+      numOfDuplicates++;
+    }
+  
+    return sequence[sequence.length - 1];
   }
 
   function getRnOrLPNOrCNA(children) {
